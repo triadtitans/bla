@@ -10,7 +10,18 @@ int main()
 {
   size_t n = 5;
   bla::Vector<double> x(n), y(n);
-  bla::Matrix<double> a(n,n), b(n,n);
+  bla::Matrix<double> a(2,2), b(2,2);
+  a(0,0)=1;
+  a(0,1)=2;
+  a(1,0)=3;
+  a(1,1)=4;
+
+  b(0,0)=4;
+  b(0,1)=3;
+  b(1,0)=2;
+  b(1,1)=1;
+
+
 
   for (size_t i = 0; i < x.Size(); i++)
     {
@@ -19,7 +30,10 @@ int main()
     }
 
   a.Dump();
-
+  printf("\n");
+  b.Dump();
+  printf("\n");
+  (a*b).Dump();
   bla::Vector<double> z = x+y;
   
   std::cout << "x+y = " << z << std::endl;
