@@ -44,6 +44,7 @@ int main()
   std::cout << "\n";
   (a*3.0).Dump();
   a.Inverse();
+  b.Inverse();
 }
 
 
