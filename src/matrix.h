@@ -24,9 +24,9 @@ namespace ASC_bla {
 
         T& operator()(size_t row, size_t column) {
             if constexpr (ORD == Ordering::ColMajor) {
-                return _data[row * _height + column];
+                return _data[column * _height + row];
             } else {
-                return _data[column * _width + row];
+                return _data[row * _width + column];
             }
         }
 
@@ -41,6 +41,20 @@ namespace ASC_bla {
         size_t Width() const { return _width; }
 
         size_t Height() const { return _height; }
+
+        Matrix<T> Inverse() const{
+            if(this->Height() != this->Width())
+                throw std::invalid_argument("Only square matrixes allowed");
+            Matrix<T> work{this->Height(),this->Height()*2};
+            for(size_t row=0; row < work.Height();row++){
+                for(size_t column=0; column < work.Height();column++){
+                    work(row,column)=(*this)(row,column);
+                    work(row,column+Height()) = (row==column) ? 1 : 0;
+                }
+            }
+            work.Dump();
+            return work;
+        }
 
         void Dump() {
             for (size_t r = 0; r < this->Height(); r++) {
