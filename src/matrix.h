@@ -17,8 +17,12 @@ namespace ASC_bla {
         size_t _height;
     public:
         Matrix(size_t height,size_t width) : _data(width * height), _width{width}, _height{height} {}
+        Matrix(const Vector<T>& v) : _data(v.Size()), _width{1}, _height{v.Size()} {
+            for(size_t i=0;i<v.Size();i++)
+                (*this)(i,0)=v(i);
+        }
 
-        T &operator()(size_t row, size_t column) {
+        T& operator()(size_t row, size_t column) {
             if constexpr (ORD == Ordering::ColMajor) {
                 return _data[row * _height + column];
             } else {
@@ -75,7 +79,11 @@ namespace ASC_bla {
 
     template<typename T>
     Vector<T> operator*(const Matrix<T> &a, const Vector<T> &x) {
-
+        Matrix m = a*Matrix(x);
+        Vector<T> res{m.Height()};
+        for(size_t i=0;i<res.Size();i++)
+            res(i)=m(i,0);
+        return res;
     }
 
     template<typename T>
@@ -84,8 +92,19 @@ namespace ASC_bla {
     }
 
     template<typename T>
-    Matrix<T> operator*(const Matrix<T> &a, T c) {
+    Matrix<T> operator*(T c, const Matrix<T> &a) {
+        Matrix<T> result = a;
+        for(size_t row=0; row < result.Height();row++){
+            for(size_t column=0; column < result.Width();column++){
+                result(row,column)*=c;
+            } 
+        }
+        return result;
+    }
 
+    template<typename T>
+    Matrix<T> operator*(const Matrix<T> &a, T c) {
+        return c*a;
     }
 
 }

@@ -44,6 +44,13 @@ namespace ASC_bla {
         T &operator()(size_t i) { return data_[i]; }
 
         const T &operator()(size_t i) const { return data_[i]; }
+
+        
+        void Dump() {
+            for (size_t r = 0; r < this->Size(); r++) {
+                std::cout << (*this)(r) << " \n";
+            }
+        }
     };
 
 

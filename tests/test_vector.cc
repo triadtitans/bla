@@ -9,7 +9,7 @@ namespace bla = ASC_bla;
 int main()
 {
   size_t n = 5;
-  bla::Vector<double> x(n), y(n);
+  bla::Vector<double> x(n), y(n), d(2);
   bla::Matrix<double> a(2,2), b(2,2);
   a(0,0)=1;
   a(0,1)=2;
@@ -21,7 +21,8 @@ int main()
   b(1,0)=2;
   b(1,1)=1;
 
-
+  d(0)=3;
+  d(1)=1;
 
   for (size_t i = 0; i < x.Size(); i++)
     {
@@ -35,8 +36,13 @@ int main()
   printf("\n");
   (a*b).Dump();
   bla::Vector<double> z = x+y;
+
+  d.Dump();
   
   std::cout << "x+y = " << z << std::endl;
+  (a*d).Dump();
+  std::cout << "\n";
+  (a*3.0).Dump();
 }
 
 
