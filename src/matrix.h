@@ -31,16 +31,56 @@ namespace ASC_bla {
         }
 
         const T& operator()(size_t row, size_t column) const {
-            if constexpr (ORD == Ordering::ColMajor) {
-                return _data[row * _height + column];
+            if constexpr (ORD == Ordering::RowMajor) {
+                return _data[row * _width + column];
             } else {
-                return _data[column * _width + row];
+                return _data[column * _height + row];
             }
         }
 
         size_t Width() const { return _width; }
 
         size_t Height() const { return _height; }
+
+        Matrix<T> RowMultiply(size_t row, T c) const{
+            Matrix res = *this;
+            for(size_t i=0; i<Width();i++)
+                res(row,i)*=c;
+            return res;
+        }
+
+        Matrix<T> RowAdd(size_t row,size_t dest) const{
+            Matrix res = *this;
+            for(size_t i=0; i<Width();i++)
+                res(dest,i)+=res(row,i);
+            return res;
+        }
+
+        Matrix<T> RowMulAdd(size_t row,size_t dest, T c) const{
+            Matrix res = *this;
+            res = res.RowMultiply(row, c);
+            res = res.RowAdd(row,dest);
+            res = res.RowMultiply(row,1/c);
+            return res;
+        }
+
+        Matrix<T> RowSwap(size_t row,size_t dest) const{
+            Matrix res = *this;
+            for(size_t i=0; i<Width();i++)
+                std::swap(res(dest,i),res(row,i));
+            return res;
+        }
+
+        
+        Matrix<T> EnsureNonzero(size_t row, size_t column) const{
+            Matrix res = *this;
+            size_t i=row;
+            for(; i<Height();i++)
+                if(res(i,column)!=0) break;
+            if(i==Height())
+                throw std::invalid_argument("Matrix singular");
+            return RowSwap(column,i);
+        }
 
         Matrix<T> Inverse() const{
             if(this->Height() != this->Width())
@@ -50,6 +90,18 @@ namespace ASC_bla {
                 for(size_t column=0; column < work.Height();column++){
                     work(row,column)=(*this)(row,column);
                     work(row,column+Height()) = (row==column) ? 1 : 0;
+                }
+            }
+            work.Dump();
+            for(size_t column=0; column < work.Height();column++){
+                work = work.EnsureNonzero(column,column);
+                work.Dump();
+                work = work.RowMultiply(column,1/(work(column,column)));
+                work.Dump();
+                for(size_t row=0; row < work.Height();row++){
+                    if(row==column) continue;
+                    work = work.RowMulAdd(column,row,-work(row,column));
+                    work.Dump();
                 }
             }
             work.Dump();
@@ -63,6 +115,7 @@ namespace ASC_bla {
                 }
                 std::cout << " \n";
             }
+            std::cout << " \n";
         }
     };
 

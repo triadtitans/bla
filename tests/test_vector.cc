@@ -43,6 +43,7 @@ int main()
   (a*d).Dump();
   std::cout << "\n";
   (a*3.0).Dump();
+  a.Inverse();
 }
 
 
