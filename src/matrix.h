@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <exception>
+#include <utility>
 
 #include "expression.h"
 
@@ -30,7 +31,7 @@ public:
         }
         for (size_t col = 0; col < _width; col++){
             for(size_t row=0; row < _height; row++){
-                this(row, col)= m2(row, col);
+                (*this)(row, col)= m2(row, col);
             }
         }
         return *this;
@@ -39,7 +40,7 @@ public:
     MatrixView &operator=(T scal) {
         for (size_t col = 0; col < _width; col++){
             for(size_t row=0; row < _height; row++){
-                this(row, col)= scal;
+                (*this)(row, col)= scal;
             }
         }
         return *this;
