@@ -15,5 +15,14 @@ int main()
     }
   }
 
-  bla::MatrixView<int> view = m.Cols(0,1);
+  bla::MatrixView<int> view = m.Cols(0,2);
+  view = m.Rows(0,2);
+  view = 1000;
+
+  for (int i = 0; i < 3; i++) {
+    for (int j = 0; j < 3; j++) {
+      printf("%d ", m(j,i));
+    }
+    printf("\n");
+  }
 }
