@@ -14,6 +14,19 @@ namespace ASC_bla {
         auto operator()(size_t i) const { return Upcast()(i); }
     };
 
+    template<typename T>
+    class MatrixExpr {
+    public:
+        auto Upcast() const { return static_cast<const T &> (*this); }
+
+        size_t Width() const { return Upcast().Width(); }
+        size_t Height() const { return Upcast().Height(); }
+
+        auto operator()(size_t row,size_t col) const { return Upcast()(row,col); }
+    };
+
+
+
 
     template<typename TA, typename TB>
     class SumVecExpr : public VecExpr<SumVecExpr<TA, TB>> {

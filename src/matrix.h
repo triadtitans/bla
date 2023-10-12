@@ -23,7 +23,7 @@ namespace ASC_bla {
                 (*this)(i, 0) = v(i);
         }
 
-        T &operator()(size_t row, size_t column) {
+        T& operator()(size_t row, size_t column) {
             if constexpr (ORD == Ordering::ColMajor) {
                 return _data[column * _height + row];
             } else {
@@ -31,7 +31,7 @@ namespace ASC_bla {
             }
         }
 
-        const T &operator()(size_t row, size_t column) const {
+        const T& operator()(size_t row, size_t column) const {
             if constexpr (ORD == Ordering::RowMajor) {
                 return _data[row * _width + column];
             } else {
@@ -175,5 +175,114 @@ namespace ASC_bla {
         return c * a;
     }
 
+template <typename T, Ordering Ord = Ordering::RowMajor>
+class MatrixView : public MatrixExpr<MatrixView<T,Ord>>{
+protected:
+    T* _data;
+    size_t _width;
+    size_t _height;
+    size_t _dist;
+public:
+    MatrixView(size_t height, size_t width, T* data, size_t dist):
+        _data{data},_width{width},_height{height},_dist{dist}{};
+
+
+    template<typename TB>
+    MatrixView &operator=(const MatrixExpr<TB> &m2) {
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                this(row, col)= m2(row, col);
+            }
+        }
+        return *this;
+    }
+
+    MatrixView &operator=(T scal) {
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                this(row, col)= scal;
+            }
+        }
+        return *this;
+    }
+
+    auto View() const { return MatrixView(_height,_width,_data, _dist); }
+
+    size_t Height() const { return _height; }
+    size_t Width() const { return _width; }
+
+    T& operator()(size_t row, size_t column) {
+        return const_cast<T&>(std::as_const(v))(row,column);
+    }
+
+    const T& operator()(size_t row, size_t column) const {
+        if constexpr (ORD == Ordering::RowMajor) {
+            return _data[row * _dist + column];
+        } else {
+            return _data[column * _dist + row];
+        }
+    }
+};
+
+template<typename T, Ordering ORD=Ordering::RowMajor>
+class Matrix : public MatrixView<T,ORD> {
+    typedef MatrixView<T> BASE;
+    using BASE::_width;
+    using BASE::_height;
+    using BASE::_data;
+
+public:
+    Matrix(size_t height, size_t width)
+            : MatrixView<T,ORD>(height, width, new T[height*width], ORD == Ordering::RowMajor ? width : height ) {}
+
+    Matrix(const Matrix &m)
+            : Matrix(m.Height(),m.Width()) {
+        *this = m;
+    }
+
+    Matrix(Matrix &&m)
+            : MatrixView<T,ORD>{0, nullptr} {
+        std::swap(_width, m._width);
+        std::swap(_height, m._height);
+        std::swap(data_, m.data_);
+    }
+
+    template<typename TA>
+    Matrix(const MatrixExpr<TA> &m)
+            : Matrix(m.Height()+m.Width()) {
+        *this = m;
+    }
+
+
+    ~Matrix() { delete[] data_; }
+
+    using BASE::operator=;
+
+    Matrix &operator=(const Matrix &m2) {
+        _width = this->_width;
+        _height = this->_height;
+        for (size_t col = 0; i < _width*_size; i++){
+            _data[i]=m2->_data[i]
+
+        }
+        return *this;
+    }
+
+    Matrix &operator=(Matrix &&m2) {
+        m._width = 0;
+        m._size = 0;
+        m._data = nullptr;
+        std::swap(_height, m._height);
+        std::swap(_width, m._width);
+        std::swap(data_, m.data_);
+        return *this;
+    }
+};
+
 }
+
+
 #endif
