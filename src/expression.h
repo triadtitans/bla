@@ -13,8 +13,8 @@ namespace ASC_bla
     size_t Size() const { return Upcast().Size(); }
     auto operator() (size_t i) const { return Upcast()(i); }
   };
-  
- 
+
+
   template <typename TA, typename TB>
   class SumVecExpr : public VecExpr<SumVecExpr<TA,TB>>
   {
@@ -35,7 +35,7 @@ namespace ASC_bla
 
 
 
-  
+
   template <typename TSCAL, typename TV>
   class ScaleVecExpr : public VecExpr<ScaleVecExpr<TSCAL,TV>>
   {
@@ -65,7 +65,7 @@ namespace ASC_bla
       ost << ", " << v(i);
     return ost;
   }
-  
+
 }
- 
+
 #endif
