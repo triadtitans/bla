@@ -5,6 +5,8 @@
 #include <vector>
 #include <exception>
 
+#include "expression.h"
+
 namespace ASC_bla {
     enum class Ordering {
         ColMajor, RowMajor
@@ -19,8 +21,7 @@ protected:
     size_t _dist;
 public:
     MatrixView(size_t height, size_t width, T* data, size_t dist):
-        _data{data},_width{width},_height{height},_dist{dist}{};
-
+        _data{data},_width{width},_height{height},_dist{dist} {};
 
     template<typename TB>
     MatrixView &operator=(const MatrixExpr<TB> &m2) {
@@ -49,8 +50,26 @@ public:
     size_t Height() const { return _height; }
     size_t Width() const { return _width; }
 
+    MatrixView Cols(size_t first, size_t next) {
+        return MatrixView(
+            next,
+            this->Height(),
+            this->_data + first,
+            this->_dist
+        );
+    }
+
+    MatrixView Rows(size_t first, size_t next) {
+        return MatrixView(
+            this->Width(),
+            next,
+            this->_data + this->_dist * first,
+            this->_dist
+        );
+    }
+
     T& operator()(size_t row, size_t column) {
-        return const_cast<T&>(std::as_const(*this))(row,column);
+        return const_cast<T&>(std::as_const(*this)(row,column));
     }
 
     const T& operator()(size_t row, size_t column) const {
