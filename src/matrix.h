@@ -52,9 +52,10 @@ public:
     size_t Width() const { return _width; }
 
     MatrixView Cols(size_t first, size_t next) {
+        // constructor: size_t height, size_t width, T* data, size_t dist
         return MatrixView(
-            next,
             this->Height(),
+            next,
             this->_data + first,
             this->_dist
         );
@@ -62,8 +63,8 @@ public:
 
     MatrixView Rows(size_t first, size_t next) {
         return MatrixView(
-            this->Width(),
             next,
+            this->Width(),
             this->_data + this->_dist * first,
             this->_dist
         );
