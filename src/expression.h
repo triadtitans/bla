@@ -78,7 +78,7 @@ namespace ASC_bla {
             if(_m.Width() != _v.Size()){
                 throw std::invalid_argument("Matrix/Vector dimension must match for multiplication");
             }
-            typename TM::ElemT sum = 0; //TODO: Zero element of T
+            typename TM::ElemT sum = 0; //TODO: Zero element of ElemT
             for (size_t i = 0; i < _v.Size(); i++) {
                 sum += _m(row, i) * _v(i);
             }   
