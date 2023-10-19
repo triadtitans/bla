@@ -92,6 +92,11 @@ PYBIND11_MODULE(bla, m) {
       .def("__add__", [](Matrix<double> & self, Matrix<double> & other)
       { return Matrix<double> (self+other); })
 
+      .def_property_readonly("shape",
+      [](const Matrix<double, RowMajor>& self) {
+           return std::tuple(self.Height(), self.Width());
+      })
+
       .def("__rmul__", [](Matrix<double> & self, double scal)
        { return Matrix<double> (scal*self); })
       
