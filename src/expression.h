@@ -1,6 +1,7 @@
 #ifndef FILE_EXPRESSION_H
 #define FILE_EXPRESSION_H
 #include <exception>
+#include <iostream>
 
 namespace ASC_bla {
 
@@ -25,6 +26,17 @@ namespace ASC_bla {
 
         auto operator()(size_t row,size_t col) const { return Upcast()(row,col); }
     };
+
+    template<typename T>
+    std::ostream& operator<<(std::ostream& oss, const MatrixExpr<T>& m) {            
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                oss << m(i,j) << " ";
+            }
+            oss << std::endl;
+        }
+        return oss;
+    }
 
     template<typename TA, typename TB>
     class SumMatrixExpr : public MatrixExpr<SumMatrixExpr<TA, TB>>{

@@ -112,3 +112,4 @@ fabric.properties
 *.app
 
 venv
+__pycache__
