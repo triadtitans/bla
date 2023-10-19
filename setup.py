@@ -10,7 +10,7 @@ if 'win32' in sys.platform:
 setup(
     name="ASCsoft",
     version="0.0.2",
-    author="J. Schoeberl",
+    author="Triadtitans",
     license="MIT",
     packages=["ASCsoft"],
     cmake_args=_cmake_args

@@ -110,3 +110,5 @@ fabric.properties
 *.exe
 *.out
 *.app
+
+venv
