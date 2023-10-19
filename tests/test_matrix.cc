@@ -18,6 +18,8 @@ int main()
   bla::MatrixView<int> view = m.Cols(0,2).Rows(1,1);
   
   view = 1000;
+  
+  m = bla::Matrix<double,bla::Ordering::RowMajor>(10.0 * m);
 
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
@@ -25,4 +27,6 @@ int main()
     }
     printf("\n");
   }
+
+  std::cout << m;
 }
