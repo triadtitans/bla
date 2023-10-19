@@ -93,7 +93,7 @@ PYBIND11_MODULE(bla, m) {
       { return Matrix<double> (self+other); })
 
       .def_property_readonly("shape",
-      [](const Matrix<double, RowMajor>& self) {
+      [](const Matrix<double, Ordering::RowMajor>& self) {
            return std::tuple(self.Height(), self.Width());
       })
 
