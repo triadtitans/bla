@@ -29,8 +29,8 @@ namespace ASC_bla {
 
     template<typename T>
     std::ostream& operator<<(std::ostream& oss, const MatrixExpr<T>& m) {            
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
+        for (int i = 0; i < m.Height(); i++) {
+            for (int j = 0; j < m.Width(); j++) {
                 oss << m(i,j) << " ";
             }
             oss << std::endl;
