@@ -54,14 +54,14 @@ namespace ASC_bla {
         TB b_;
     public:
         MultiplyMatrixExpr(TA a, TB b):a_(a),b_(b){}
-        auto operator()(size_t row, size_t col) const { 
+        auto operator()(size_t row, size_t col) const {
             if(a_.Width() != b_.Height()){
                 throw std::invalid_argument("Matrix dimension must match for multiplication");
             }
             typename TA::ElemT sum = 0; //TODO: Zero element of T
             for (size_t i = 0; i < a_.Width(); i++) {
                 sum += a_(row, i) * b_(i, col);
-            }    
+            }
         }
         size_t Width() const { return b_.Width(); }
         size_t Height() const { return a_.Height(); }
@@ -74,14 +74,14 @@ namespace ASC_bla {
     public:
         MatrixMulVecExpr(TM m, TV v) : _m(m), _v(v) {}
 
-        auto operator()(size_t row) const { 
+        auto operator()(size_t row) const {
             if(_m.Width() != _v.Size()){
                 throw std::invalid_argument("Matrix/Vector dimension must match for multiplication");
             }
             typename TM::ElemT sum = 0; //TODO: Zero element of ElemT
             for (size_t i = 0; i < _v.Size(); i++) {
                 sum += _m(row, i) * _v(i);
-            }   
+            }
         }
 
         size_t Size() const { return _m.Height(); }

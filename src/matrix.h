@@ -7,6 +7,7 @@
 #include <utility>
 
 #include "expression.h"
+#include "vector.h"
 
 namespace ASC_bla {
     enum class Ordering {
@@ -69,6 +70,27 @@ public:
             this->_dist
         );
     }
+
+    VectorView<T, size_t> Row(size_t i) {
+        if(ORD == Ordering::RowMajor) {
+            return VectorView<T, size_t>(_width, 1, _data+i*_width);
+        }
+
+        return VectorView<T, size_t>(_width, _height, _data+i);
+    }
+
+    VectorView<T, size_t> Col(size_t j) {
+        if(ORD == Ordering::ColMajor) {
+            return VectorView<T, size_t>(_height, 1, _data+j*_width);
+        }
+
+        return VectorView<T, size_t>(_height, _width, _data+j);
+    }
+
+    MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose() {
+        return MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>(_height, _width, _data, ORD == Ordering::RowMajor ? _width : _height);
+    };
+
 
     T& operator()(size_t row, size_t column) {
         return const_cast<T&>(std::as_const(*this)(row,column));
@@ -136,6 +158,11 @@ public:
         return *this;
     }
 };
+
+template<typename T, Ordering ORD>
+MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose(MatrixView<T, ORD> &m) {
+    return m.Transpose();
+}
 
 }
 
