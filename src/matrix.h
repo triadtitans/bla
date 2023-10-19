@@ -111,6 +111,7 @@ class Matrix : public MatrixView<T,ORD> {
     using BASE::_width;
     using BASE::_height;
     using BASE::_data;
+    using BASE::_dist;
 
 public:
     Matrix(size_t height, size_t width)
@@ -126,6 +127,7 @@ public:
         std::swap(_width, m._width);
         std::swap(_height, m._height);
         std::swap(_data, m._data);
+        std::swap(_dist,m._dist);
     }
 
     template<typename TA>
@@ -142,6 +144,7 @@ public:
     Matrix &operator=(const Matrix &m2) {
         _width = this->_width;
         _height = this->_height;
+        _dist = this->_dist;
         for (size_t i = 0; i < _width*_height; i++){
             _data[i]=m2._data[i];
         }
@@ -152,9 +155,11 @@ public:
         _width = 0;
         _height = 0;
         _data = nullptr;
+        _dist = 0;
         std::swap(_height, m._height);
         std::swap(_width, m._width);
         std::swap(_data, m._data);
+        std::swap(_dist, m._dist);
         return *this;
     }
 };
