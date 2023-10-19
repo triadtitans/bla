@@ -7,3 +7,4 @@ for p in [(i,j,i+j) for i in range(3) for j in range(3)]:
 
 print(m)
 print(3*m)
+print(m*m)
