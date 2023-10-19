@@ -89,6 +89,11 @@ namespace ASC_bla {
         size_t Height() const { return a_.Height(); }
     };
 
+    template<typename TA, typename TB>
+    auto operator*(const MatrixExpr<TA> &a, const MatrixExpr<TB> &b) {
+        return MultiplyMatrixExpr(a.Upcast(), b.Upcast());
+    }
+
     template<typename TM, typename TV>
     class MatrixMulVecExpr : public VecExpr<MatrixMulVecExpr<TM, TV>> {
         TM _m;
@@ -108,6 +113,11 @@ namespace ASC_bla {
 
         size_t Size() const { return _m.Height(); }
     };
+
+    template<typename TA, typename TB>
+    auto operator*(const MatrixExpr<TA> &m, const VecExpr<TB> &v) {
+        return MatrixMulVecExpr(m.Upcast(), v.Upcast());
+    }
 
     template<typename TA, typename TB>
     class SumVecExpr : public VecExpr<SumVecExpr<TA, TB>> {
