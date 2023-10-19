@@ -62,7 +62,7 @@ PYBIND11_MODULE(bla, m) {
         }))
     ;
 
-    py::class_<Matrix<double,Ordering::RowMajor>> (m, "Matrix")
+    py::class_<Matrix<double,Ordering::RowMajor>> (m, "Matrix", py::buffer_protocol())
       .def(py::init<size_t,size_t>(),
            py::arg("height"), py::arg("width"), "create matrix of given size")
       .def("__setitem__", [](Matrix<double,Ordering::RowMajor> & self, std::tuple<int, int> shape, double v) {
@@ -78,6 +78,19 @@ PYBIND11_MODULE(bla, m) {
       .def("__getitem__", [](Matrix<double,Ordering::RowMajor> & self, std::tuple<int,int> shape) {
         auto [row, col] = shape;
         return self(row, col);
+      })
+
+      .def_buffer([](Matrix<double,Ordering::RowMajor> &m) -> py::buffer_info {
+        std::cout << "Using buffer protocol ...";
+        return py::buffer_info(
+            &m(0,0),                               /* Pointer to buffer */
+            sizeof(double),                          /* Size of one scalar */
+            py::format_descriptor<double>::format(), /* Python struct-style format descriptor */
+            2,                                      /* Number of dimensions */
+            { m.Height(), m.Width() },                 /* Buffer dimensions */
+            { sizeof(double) * m.Dist(),             /* Strides (in bytes) for each index */
+              sizeof(double) }
+        );
       })
       
       // We don't know yet what slicing should do with matrices.
