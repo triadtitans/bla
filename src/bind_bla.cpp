@@ -9,7 +9,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(bla, m) {
     m.doc() = "Basic linear algebra module"; // optional module docstring
-    
+
     py::class_<Vector<double>> (m, "Vector")
       .def(py::init<size_t>(),
            py::arg("size"), "create vector of given size")
@@ -79,6 +79,7 @@ PYBIND11_MODULE(bla, m) {
         return self(row, col);
       })
       
+      // We don't know yet what slicing should do with matrices.
       // .def("__setitem__", [](Vector<double> & self, py::slice inds, double val)
       // {
       //   size_t start, stop, step, n;
@@ -86,12 +87,6 @@ PYBIND11_MODULE(bla, m) {
       //     throw py::error_already_set();
       //   self.Range(start, stop).Slice(0,step) = val;
       // })
-      
-      // .def("__add__", [](Vector<double> & self, Vector<double> & other)
-      // { return Vector<double> (self+other); })
-
-      // .def("__rmul__", [](Vector<double> & self, double scal)
-      // { return Vector<double> (scal*self); })
       
       .def("__str__", [](const Matrix<double,Ordering::RowMajor> & self)
       {
