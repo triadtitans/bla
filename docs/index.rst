@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Triadtitans-bla's documentation!
+Welcome to triadtitans-bla's documentation!
 ===================================
 
-ASC-bla is a C++ library for basic linear algebra operations.
+bla is a C++ library for basic linear algebra operations.
 The library provides template classes **Vector** and **Matrix**.
 
 Installation is via git-clone:
@@ -27,24 +27,18 @@ To configure and build some tests do
     make
     
 
-To use ASC-bla in your code, set the compiler include path properly, and include the header files
+To use bla in your code, set the compiler include path properly, and include the header files
 
 ..  code-block::
 
     #include <vector.h>
     #include <matrix.h>
 
-All objects are implemented in the namespace ASC_bla. To use them with less typing, you can set
+All objects are implemented in the namespace bla. To use them with less typing, you can use
 
 ..  code-block::
     
-    namespace bla = ASC_bla;
-
-or even
-
-..  code-block::
-    
-    using namespace ASC_bla;
+    using namespace bla;
 
     
 
@@ -78,10 +72,30 @@ You can extract a rows or a columns from a matrix:
 
    Vector col1 = product.Col(1);
 
+Python bindings
+===============
 
-some changes ...  
+It is possible to use the library in python to benefit from better performance
+when working with matrices. To install the library run:
 
-   
+.. code-block:: bash
+   pip install git+https://github.com/triadtitans/bla.git
+
+It then possible to use the library as follows:
+
+.. code-block:: python
+   import ASCsoft.bla as bla
+
+   m = bla.Matrix(3,3)
+   for p in [(i,j,i+j) for i in range(3) for j in range(3)]:
+     (r,c,v) = p
+     m[r,c] = v
+
+   print(m)
+   print(3*m)
+   print(m*m)
+
+
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
