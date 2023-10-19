@@ -122,7 +122,7 @@ public:
     }
 
     Matrix(Matrix &&m)
-            : MatrixView<T,ORD>{0, nullptr} {
+            : MatrixView<T,ORD>{0,0, nullptr,0} {
         std::swap(_width, m._width);
         std::swap(_height, m._height);
         std::swap(_data, m._data);
@@ -130,7 +130,7 @@ public:
 
     template<typename TA>
     Matrix(const MatrixExpr<TA> &m)
-            : Matrix(m.Height()+m.Width()) {
+            : Matrix(m.Height(),m.Width()) {
         *this = m;
     }
 
@@ -143,7 +143,7 @@ public:
         _width = this->_width;
         _height = this->_height;
         for (size_t i = 0; i < _width*_height; i++){
-            _data[i]=m2->_data[i];
+            _data[i]=m2._data[i];
         }
         return *this;
     }

@@ -60,6 +60,16 @@ namespace ASC_bla {
         size_t Height() const { return _a.Height(); }
     };
 
+    template<typename T>
+    auto operator*(double scal, const MatrixExpr<T> &m) {
+        return ScaleMatrixExpr(m.Upcast(),scal);
+    }
+
+    template<typename T>
+    auto operator+(const MatrixExpr<T> &m, const MatrixExpr<T> &n) {
+        return SumMatrixExpr(n.Upcast(), m.Upcast());
+    }
+
     template<typename TA, typename TB>
     class MultiplyMatrixExpr : public MatrixExpr<MultiplyMatrixExpr<TA, TB>>{
         TA a_;

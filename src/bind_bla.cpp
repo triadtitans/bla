@@ -1,6 +1,7 @@
 #include <sstream>
 #include <pybind11/pybind11.h>
 
+#include "expression.h"
 #include "vector.h"
 #include "matrix.h"
 
@@ -87,6 +88,12 @@ PYBIND11_MODULE(bla, m) {
       //     throw py::error_already_set();
       //   self.Range(start, stop).Slice(0,step) = val;
       // })
+      
+      .def("__add__", [](Matrix<double> & self, Matrix<double> & other)
+      { return Matrix<double> (self+other); })
+
+      .def("__rmul__", [](Matrix<double> & self, double scal)
+       { return Matrix<double> (scal*self); })
       
       .def("__str__", [](const Matrix<double,Ordering::RowMajor> & self)
       {

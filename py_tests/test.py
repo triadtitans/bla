@@ -6,3 +6,4 @@ for p in [(i,j,i+j) for i in range(3) for j in range(3)]:
   m[r,c] = v
 
 print(m)
+print(3*m)
