@@ -79,11 +79,13 @@ It is possible to use the library in python to benefit from better performance
 when working with matrices. To install the library run:
 
 ..   code-block::
+
    pip install git+https://github.com/triadtitans/bla.git
 
 It then possible to use the library as follows:
 
 ..   code-block:: python
+
    import ASCsoft.bla as bla
 
    m = bla.Matrix(3,3)
