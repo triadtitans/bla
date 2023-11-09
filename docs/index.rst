@@ -97,6 +97,14 @@ It then possible to use the library as follows:
    print(3*m)
    print(m*m)
 
+Pickling support
+----------------
+
+The python objects defined by bla can efficiently be serialized using pickle.
+The following example shows how this can be done:
+
+..   code-block:: Python
+   <TODO>
 
 .. toctree::
    :maxdepth: 2

@@ -29,7 +29,7 @@ PYBIND11_MODULE(bla, m) {
         size_t start, stop, step, n;
         if (!inds.compute(self.Size(), &start, &stop, &step, &n))
           throw py::error_already_set();
-        self.Range(start, stop).Slice(0,step) = val;
+        self.Range(start, stop+1).Slice(0,step) = val;
       })
       
       .def("__add__", [](Vector<double> & self, Vector<double> & other)
@@ -115,6 +115,9 @@ PYBIND11_MODULE(bla, m) {
       
       .def("__mul__", [](Matrix<double> & self, Matrix<double> other)
        { return Matrix<double> (self*other); })
+
+      .def("__mul__", [](Matrix<double> & self, Vector<double> other)
+       { return Vector<double> (self*other); })
 
       .def("__str__", [](const Matrix<double,Ordering::RowMajor> & self)
       {

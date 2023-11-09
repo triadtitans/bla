@@ -110,6 +110,7 @@ namespace ASC_bla {
             for (size_t i = 0; i < _v.Size(); i++) {
                 sum += _m(row, i) * _v(i);
             }
+            return sum;
         }
 
         size_t Size() const { return _m.Height(); }
