@@ -79,6 +79,9 @@ PYBIND11_MODULE(bla, m) {
         auto [row, col] = shape;
         return self(row, col);
       })
+      .def("inverse", [](Matrix<double,Ordering::RowMajor> & self) {
+        return inverse(self);
+      })
 
       .def_buffer([](Matrix<double,Ordering::RowMajor> &m) -> py::buffer_info {
         std::cout << "Using buffer protocol ...";

@@ -1,6 +1,7 @@
 import ASCsoft.bla as bla
 import numpy as np
 import pytest
+import pickle
 
 @pytest.fixture
 def simple_matrix():
@@ -92,3 +93,25 @@ def test_vector_slice(vector4):
   assert vector4[1] == 100
   assert vector4[2] == 100
   assert vector4[3] == 4
+
+def test_pickle(simple_matrix):
+  pickled_matrix = pickle.loads(pickle.dumps(simple_matrix))
+
+  assert_matrix(
+    pickled_matrix,
+    [[0,1,2],
+     [1,2,3],
+     [2,3,4]]
+  )
+
+def test_inverse(regular_matrix):
+  inverse = regular_matrix.inverse()
+  print(inverse)
+
+  assert_matrix(
+    inverse,
+    [[0,0,0,1],
+     [0,0,1,0],
+     [0,1,0,0],
+     [1,0,0,0]]
+  )
