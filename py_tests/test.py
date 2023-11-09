@@ -11,3 +11,11 @@ print(3*m)
 print(m*m)
 
 print(np.array(m))
+
+import pickle
+f = open("file.txt", 'wb')
+pickle.dump(m, f)
+del f
+f2 = open("file.txt", 'rb')
+val = pickle.load(f2)
+print (val)

@@ -91,7 +91,18 @@ public:
     MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose() {
         return MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>(_height, _width, _data, ORD == Ordering::RowMajor ? _width : _height);
     };
-
+    void RowSwap(size_t row,size_t dest){
+        for(size_t i=0; i<Width();i++)
+            std::swap((*this)(dest,i),(*this)(row,i));
+    }
+    void EnsureNonzero(size_t row, size_t column){
+        size_t i=row;
+        for(; i<Height();i++)
+            if((*this)(i,column)!=0) break;
+        if(i==Height())
+            throw std::invalid_argument("Matrix singular");
+        RowSwap(column,i);
+    }
 
     T& operator()(size_t row, size_t column) {
         return const_cast<T&>(std::as_const(*this)(row,column));
@@ -170,7 +181,35 @@ MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>
     return m.Transpose();
 }
 
+
+template <typename T>
+Matrix<T> inverse(const MatrixView<T>& m ){
+    if(m.Height() != m.Width())
+        throw std::invalid_argument("Only square matrixes allowed");
+    Matrix<T> work{m.Height(),m.Height()*2};
+    for(size_t row=0; row < work.Height();row++){
+        for(size_t column=0; column < work.Height();column++){
+            work(row,column)=m(row,column);
+            work(row,column+m.Height()) = (row==column) ? 1 : 0;
+        }
+    }
+    std::cout << work;
+    for(size_t column=0; column < work.Height();column++){
+        work.EnsureNonzero(column,column);
+        std::cout << work;
+        work.Rows(column,column+1)=1.0/(work(column,column))*work.Rows(column,column+1);
+        //work.RowMultiply(column,1/(work(column,column)));
+        std::cout << work;
+        for(size_t row=0; row < work.Height();row++){
+            if(row==column) continue;
+            work.Rows(row, row+1) = work.Rows(row, row+1) + (-work(row,column))*work.Rows(column,column+1);
+            //work = work.RowMulAdd(column,row,-work(row,column));
+            std::cout << work;
+        }
+    }
+    std::cout << work;
+    return work;
 }
 
-
+}
 #endif

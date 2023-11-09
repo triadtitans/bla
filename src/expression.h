@@ -65,8 +65,8 @@ namespace ASC_bla {
         return ScaleMatrixExpr(m.Upcast(),scal);
     }
 
-    template<typename T>
-    auto operator+(const MatrixExpr<T> &m, const MatrixExpr<T> &n) {
+    template<typename TA, typename TB>
+    auto operator+(const MatrixExpr<TA> &m, const MatrixExpr<TB> &n) {
         return SumMatrixExpr(n.Upcast(), m.Upcast());
     }
 
