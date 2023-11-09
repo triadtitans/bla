@@ -208,7 +208,8 @@ Matrix<T> inverse(const MatrixView<T>& m ){
         }
     }
     std::cout << work;
-    return work;
+    Matrix<T> result = work.Cols(m.Width(),m.Width());
+    return result;
 }
 
 }
