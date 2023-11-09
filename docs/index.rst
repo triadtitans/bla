@@ -103,8 +103,35 @@ Pickling support
 The python objects defined by bla can efficiently be serialized using pickle.
 The following example shows how this can be done:
 
-..   code-block:: Python
-   <TODO>
+..   code-block:: python
+
+   import pickle
+
+   # write matrix to file
+   f = open("file.txt", 'wb')
+   pickle.dump(matrix, f)
+   del f
+
+   # load matrix from file
+   f2 = open("file.txt", 'rb')
+   val = pickle.load(f2)
+   del f2
+
+   # print loaded matrix
+   print (val)
+
+Buffer protocol
+---------------
+
+In case conversion of bla objects to numpy arrays is necessary, the
+Matrix class is compliant with pythons buffer protocol. If you initialise a
+numpy array like this:
+
+.. code-block:: python
+
+   array = np.array(simple_matrix)
+
+The buffer protocol will be used to efficiently pass the matrix to numpy.
 
 .. toctree::
    :maxdepth: 2

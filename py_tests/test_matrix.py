@@ -115,3 +115,7 @@ def test_inverse(regular_matrix):
      [0,1,0,0],
      [1,0,0,0]]
   )
+
+def test_buffer_protocol(simple_matrix):
+  array = np.array(simple_matrix)
+  assert len(array)
