@@ -29,22 +29,21 @@ namespace ASC_bla {
             return *this;
         }
 
-        VectorView &operator=(T scal) {
-            for (size_t i = 0; i < size_; i++)
-                data_[dist_ * i] = scal;
-            return *this;
+        VectorView & operator= (T scal)
+        {
+          for (size_t i = 0; i < size_; i++)
+            data_[dist_*i] = scal;
+          return *this;
         }
-
+        
         auto View() const { return VectorView(size_, dist_, data_); }
-
         size_t Size() const { return size_; }
-
-        T &operator()(size_t i) { return data_[dist_ * i]; }
-
-        const T &operator()(size_t i) const { return data_[dist_ * i]; }
-
+        auto Dist() const { return dist_; }
+        T & operator()(size_t i) { return data_[dist_*i]; }
+        const T & operator()(size_t i) const { return data_[dist_*i]; }
+        
         auto Range(size_t first, size_t next) const {
-            return VectorView(next - first, dist_, data_ + first * dist_);
+          return VectorView(next-first, dist_, data_+first*dist_);
         }
 
         auto Slice(size_t first, size_t slice) const {
