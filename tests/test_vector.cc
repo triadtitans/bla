@@ -64,10 +64,10 @@ int main()
   std::cout << "x+3*y = " << x+3*y << std::endl;
 
   std::cout << "sizeof(x+3*y) = " << sizeof(x+3*y) << std::endl;
-  
+  std::cout <<x<<"\n";
   x.Range(2,9) = 3;
+  std::cout <<x<<"\n";
   x.Slice(1,5) = 10;
-  
   std::cout << "x = " << x << std::endl;  
 }
 

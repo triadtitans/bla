@@ -5,7 +5,7 @@
 #include <string>
 
 #include "vector.h"
-
+#include "matrix.h"
 
 
 #include <complex>
@@ -50,8 +50,8 @@ namespace ASC_bla
     integer incy = y.Dist();
     int err = 
       daxpy_ (&n, &alpha, &x(0),  &incx, &y(0), &incy);
-    if (err != 0)
-      throw std::runtime_error(std::string("daxpy returned errcode "+std::to_string(err)));      
+    /* if (err != 0)
+      throw std::runtime_error(std::string("daxpy returned errcode "+std::to_string(err)));   */    
   }
   
   
@@ -64,15 +64,15 @@ namespace ASC_bla
   // doublereal *b, integer *ldb, doublereal *beta, doublereal *c__, 
   // integer *ldc);
 
-  /*  
+  
   // c = a*b
-  template <ORDERING OA, ORDERING OB>
+  template <Ordering OA, Ordering OB>
   void MultMatMatLapack (MatrixView<double, OA> a,
                          MatrixView<double, OB> b,
-                         MatrixView<double, ColMajor> c)
+                         MatrixView<double, Ordering::ColMajor> c)
   {
-    char transa_ = (OA == ColMajor) ? 'N' : 'T';
-    char transb_ = (OB == ColMajor) ? 'N' : 'T'; 
+    char transa_ = (OA == Ordering::ColMajor) ? 'N' : 'T';
+    char transb_ = (OB == Ordering::ColMajor) ? 'N' : 'T'; 
   
     integer n = c.Height();
     integer m = c.Width();
@@ -88,18 +88,18 @@ namespace ASC_bla
       dgemm_ (&transa_, &transb_, &n, &m, &k, &alpha, 
               a.Data(), &lda, b.Data(), &ldb, &beta, c.Data(), &ldc);
 
-    if (err != 0)
-      throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err)));
+    /* if (err != 0)
+      throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err))); */
   }
                        
-  template <ORDERING OA, ORDERING OB>
-  int MultMatMatLapack (MatrixView<double, OA> a,
+  template <Ordering OA, Ordering OB>
+  void MultMatMatLapack (MatrixView<double, OA> a,
                         MatrixView<double, OB> b,
-                        MatrixView<double, RowMajor> c)
+                        MatrixView<double, Ordering::RowMajor> c)
   {
-    MultMatMatLapack (Trans(b), Trans(a), Trans(c));
+    MultMatMatLapack (Transpose(b), Transpose(a), Transpose(c));
   }
-  */
+
 
   
 

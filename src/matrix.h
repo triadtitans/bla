@@ -52,7 +52,7 @@ public:
     size_t Height() const { return _height; }
     size_t Width() const { return _width; }
     size_t Dist() const { return _dist; }
-
+    T* Data(){return _data;}
     MatrixView Cols(size_t first, size_t next) {
         // constructor: size_t height, size_t width, T* data, size_t dist
         return MatrixView(

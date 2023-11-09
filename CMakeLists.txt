@@ -21,7 +21,7 @@ add_executable (test_matrix tests/test_matrix.cc)
 target_sources (test_matrix PUBLIC src/vector.h src/matrix.h src/expression.h)
 
 
-
+set(BLA_SIZEOF_INTEGER 4)
 find_package(LAPACK REQUIRED)
 add_executable (test_lapack tests/test_lapack.cc)
 target_link_libraries (test_lapack PUBLIC ${LAPACK_LIBRARIES})
