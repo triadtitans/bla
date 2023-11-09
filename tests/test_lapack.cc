@@ -45,12 +45,13 @@ Matrix<double> c(3,3);
   MultMatMatLapack(p,q,c);
   std::cout << c;
   srand(0);
-  for(int n=1; n<=1;n++){
-    Matrix<double> m1(pow(10,n),pow(10,n));
-    Matrix<double> m2(pow(10,n),pow(10,n));
-    Matrix<double> m3(pow(10,n),pow(10,n));
-    for(int i=0;i<pow(10,n);i++){
-      for(int j=0;j<pow(10,n);j++){
+  for(int l=1; l<=3;l++){
+    int n = pow(10,l);
+    Matrix<double> m1(n,n);
+    Matrix<double> m2(n,n);
+    Matrix<double> m3(n,n);
+    for(int i=0;i<n;i++){
+      for(int j=0;j<n;j++){
         m1(i,j)=(double)(rand())/RAND_MAX;
         m2(i,j)=(double)(rand())/RAND_MAX;
         m3(i,j)=0;
@@ -67,7 +68,7 @@ Matrix<double> c(3,3);
     double time = std::chrono::duration<double>(end-start).count();
           
     cout << "n = " << n << ", time = " << time << " s, GFlops = " 
-        << (n*runs)/time*1e-9 << endl;
+        << (flops*runs)/time*1e-9 << endl;
   }
 
 }
