@@ -127,7 +127,7 @@ class Matrix : public MatrixView<T,ORD> {
 
 public:
     Matrix(size_t height, size_t width)
-            : MatrixView<T,ORD>(height, width, new T[height*width], ORD == Ordering::RowMajor ? width : height ) {}
+            : MatrixView<T,ORD>(height, width, new T[height*width](), ORD == Ordering::RowMajor ? width : height ) {}
 
     Matrix(const Matrix &m)
             : Matrix(m.Height(),m.Width()) {

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <exception>
 
 #include "vector.h"
@@ -88,9 +89,6 @@ namespace ASC_bla
     int err =
       dgemm_ (&transa_, &transb_, &n, &m, &k, &alpha, 
               a.Data(), &lda, b.Data(), &ldb, &beta, c.Data(), &ldc);
-
-    if (err != 0)
-      throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err)));
   }
                        
   template <Ordering OA, Ordering OB>
@@ -104,12 +102,11 @@ namespace ASC_bla
 
   
 
-  /*
-  template <ORDERING ORD>
+  
+  template <Ordering ORD>
   class LapackLU {
     Matrix <double, ORD> a;
     std::vector<integer> ipiv;
-    
   public:
     LapackLU (Matrix<double,ORD> _a)
       : a(std::move(_a)), ipiv(a.Height()) {
@@ -121,13 +118,13 @@ namespace ASC_bla
     
       // int dgetrf_(integer *m, integer *n, doublereal *a, 
       //             integer * lda, integer *ipiv, integer *info);
-
-      dgetrf_(&n, &m, &a(0,0), &lda, &ipiv[0], &info);
+std::cout << a;
+      dgetrf_(&n, &m, a.Data(), &lda, ipiv.data(), &info);
     }
     
     // b overwritten with A^{-1} b
     void Solve (VectorView<double> b) const {
-      char transa =  (ORD == ColMajor) ? 'N' : 'T';
+      char transa =  (ORD == Ordering::ColMajor) ? 'N' : 'T';
       integer n = a.Height();
       integer nrhs = 1;
       integer lda = a.Dist();
@@ -160,11 +157,51 @@ namespace ASC_bla
       return std::move(a);      
     }
 
-    // Matrix<double,ORD> LFactor() const { ... }
-    // Matrix<double,ORD> UFactor() const { ... }
-    // Matrix<double,ORD> PFactor() const { ... }
+    Matrix<double,ORD> LFactor() const { 
+      Matrix<double, ORD> l(a.Height(),a.Width());
+      l=a;
+      for(int i=0;i<std::min(a.Height(),a.Width());i++){
+        l(i,i)=1;
+      }
+      for(int i=0;i<a.Height();i++){
+        for(int j=i+1;j<a.Width();j++){
+          l(i,j)=0;
+        }
+      }
+      return l;
+     }
+    Matrix<double,ORD> UFactor() const {  
+      Matrix<double, ORD> u(a.Height(),a.Width());
+      u=a;
+      for(int i=0;i<a.Height();i++){
+        for(int j=0;j<i;j++){
+          u(i,j)=0;
+        }
+      }
+      return u; 
+      }
+
+    std::vector<int> permutations() const{
+      int n = std::min(a.Height(),a.Width());
+      std::vector<int> per(n);
+      for(int i=0;i<n;i++){
+        per[i]=i;
+      }
+      for(int i=0;i<n;i++){
+        std::swap(per[i],per[ipiv[i]-1]);
+      }
+      return per;
+    }
+    Matrix<double,ORD> PFactor() const { 
+      Matrix<double, ORD> p(a.Height(),a.Width());
+      std::vector<int> per = permutations();
+      for(int i=0;i<std::min(a.Height(),a.Width());i++){
+        p(i,per[i])=1;
+      }
+      return p;
+     }
   };
-  */ 
+  
 
 
   template <Ordering ORD>

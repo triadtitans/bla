@@ -40,6 +40,7 @@ int main()
   p(1,1)=4;
   p(1,2)=5;
   p(2,2)=6;
+  p(2,0)=0;
   /* Matrix p
   1 2 3
   0 4 5
@@ -142,4 +143,21 @@ int main()
 
 
   }
+  std::cout << p;
+  p=p.Transpose();
+  std::cout << p.Transpose();
+  std::cout << "L:\n";
+  Matrix<double> p2 = q.Transpose();
+  std::cout << p2;
+  LapackLU<Ordering::RowMajor> lu(p2);
+  auto l = lu.LFactor();
+  auto u = lu.UFactor();
+  auto per = lu.PFactor();
+  std::cout<<l;
+  std::cout << "U:\n";
+  std::cout<< u;
+  std::cout << "P:\n";
+  std::cout<< per;
+  std::cout << "P*L*U:\n";
+  std::cout<< l*u;
 }
