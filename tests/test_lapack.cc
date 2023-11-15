@@ -106,6 +106,32 @@ int main()
     cout << "n = " << n << ", time = " << time << " s, GFlops = " 
         << (flops*runs)/time*1e-9 << endl;
   }
+  for(int l=1; l<=3;l++){
+    int n = pow(10,l);
+    Matrix<double> m1(n,n);
+    Matrix<double> m2(n,n);
+    Matrix<double> m3(n,n);
+    for(int i=0;i<n;i++){
+      for(int j=0;j<n;j++){
+        m1(i,j)=(double)(rand())/RAND_MAX;
+        m2(i,j)=(double)(rand())/RAND_MAX;
+        m3(i,j)=0;
+      }
+    }
+    size_t flops = n*n*n;
+    size_t runs = size_t (1e9 / flops) + 1;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    for (size_t i = 0; i < runs; i++){
+      m3=m1*m2;
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    double time = std::chrono::duration<double>(end-start).count();
+          
+    cout << "n = " << n << ", time = " << time << " s, GFlops = " 
+        << (flops*runs)/time*1e-9 << endl;
+    }
+
   #endif
 
   std::vector<double> eigenvalues = LapackEigenvalues(a).SymEigenvalues();
@@ -113,5 +139,7 @@ int main()
   for (int i = 0; i < eigenvalues.size(); i++) {
     cout << eigenvalues[i];
     cout << ",";
+
+
   }
 }
