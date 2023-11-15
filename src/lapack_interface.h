@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <exception>
 
 #include "vector.h"
 #include "matrix.h"
@@ -88,8 +89,8 @@ namespace ASC_bla
       dgemm_ (&transa_, &transb_, &n, &m, &k, &alpha, 
               a.Data(), &lda, b.Data(), &ldb, &beta, c.Data(), &ldc);
 
-    /* if (err != 0)
-      throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err))); */
+    if (err != 0)
+      throw std::runtime_error(std::string("MultMatMat got error "+std::to_string(err)));
   }
                        
   template <Ordering OA, Ordering OB>
@@ -165,6 +166,47 @@ namespace ASC_bla
   };
   */ 
 
+
+  template <Ordering ORD>
+  class LapackEigenvalues {
+    Matrix <double, ORD> a;
+  public:
+    LapackEigenvalues (Matrix<double,ORD> _a) : a(_a) {
+      if (a.Width() != a.Height()) {
+        throw std::invalid_argument("Cannot find eigenvalues of non-quadratic matrix!");
+      }
+    }
+
+    std::vector<double> SymEigenvalues() {
+      char jobz = 'N';
+      char uplo = 'U'; // upper triangle
+      integer n = a.Width();
+      integer lda = a.Dist();
+      integer info;
+      std::vector<double> eigenvalues(n);
+
+      /* Subroutine
+      int dsyev_(char *jobz, char *uplo, integer *n, doublereal *a, 
+	      integer *lda, doublereal *w, doublereal *work, integer *lwork, 
+	      integer *info);
+      */
+
+      // query worksize
+      double out_worksize;
+      int lwork_query = -1;
+      dsyev_(&jobz, &uplo, &n, &a(0,0), &lda, &eigenvalues[0], &out_worksize, &lwork_query, &info);
+      int worksize = integer(out_worksize);
+      std::vector<double> lwork(worksize);
+      
+      dsyev_(&jobz, &uplo, &n, &a(0,0), &lda, &eigenvalues[0], &lwork[0], &worksize, &info);
+
+      if (info != 0) {
+        throw std::invalid_argument("error calculating eigenvalues!");
+      } else {
+        return eigenvalues;
+      }
+    }
+  };
   
 }
 

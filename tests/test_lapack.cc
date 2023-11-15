@@ -6,6 +6,8 @@
 #include <cmath>
 #include <stdlib.h>
 
+//#define RUN_TIMING
+
 using namespace ASC_bla;
 using namespace std;
 
@@ -15,21 +17,51 @@ int main()
   Vector<double> x(5);
   Vector<double> y(5);
 
-Matrix<double> q(3,3);
-Matrix<double> p(3,3);
-Matrix<double> c(3,3);
+  Matrix<double> q(3,3);
+  Matrix<double> p(3,3);
+  Matrix<double> c(3,3);
+  Matrix<double> a(5,5);
+
   q(0,0)=1;
   q(0,1)=2;
   q(0,2)=3;
   q(1,1)=4;
   q(1,2)=5;
   q(2,2)=6;
+  /* Matrix q
+  1 2 3
+  0 4 5
+  0 0 6
+  */
+  
   p(0,0)=1;
   p(0,1)=2;
   p(0,2)=3;
   p(1,1)=4;
   p(1,2)=5;
   p(2,2)=6;
+  /* Matrix p
+  1 2 3
+  0 4 5
+  0 0 6
+  */
+
+  for (int i = 0; i < a.Height(); i++) {
+    for (int j = 0; j <= i; j++) {
+      a(i,j) = 3*i + j/2;
+      a(j,i) = 3*i + j/2;
+    }
+  }
+  /* Matrix a 
+  0  3  6  9  12
+  3  3  6  9  12
+  6  6  7  10 13
+  9  9  10 10 13
+  12 12 13 13 14
+  */
+
+  cout << a;
+
   for (int i = 0; i < x.Size(); i++)
     {
       x(i) = i;
@@ -39,11 +71,13 @@ Matrix<double> c(3,3);
   cout << "x = " << x << endl;
   cout << "y = " << y << endl;
   
-  AddVectorLapack (2, x, y);  
+  AddVectorLapack (2, x, y);
   cout << "y+2*x = " << y << endl;
 
   MultMatMatLapack(p,q,c);
   std::cout << c;
+
+  #ifdef RUN_TIMINGS
   srand(0);
   for(int l=1; l<=3;l++){
     int n = pow(10,l);
@@ -63,6 +97,8 @@ Matrix<double> c(3,3);
     auto start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i < runs; i++){
       MultMatMatLapack(m1,m2,m3);
+      //m3 = m1 * m2;
+      //m3.Width();
     }
     auto end = std::chrono::high_resolution_clock::now();
     double time = std::chrono::duration<double>(end-start).count();
@@ -70,7 +106,12 @@ Matrix<double> c(3,3);
     cout << "n = " << n << ", time = " << time << " s, GFlops = " 
         << (flops*runs)/time*1e-9 << endl;
   }
+  #endif
 
+  std::vector<double> eigenvalues = LapackEigenvalues(a).SymEigenvalues();
+  cout << endl;
+  for (int i = 0; i < eigenvalues.size(); i++) {
+    cout << eigenvalues[i];
+    cout << ",";
+  }
 }
-
-  
