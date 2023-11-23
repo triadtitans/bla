@@ -10,6 +10,8 @@
 #include "vector.h"
 #include "simd.h"
 
+using namespace ASC_HPC;
+
 namespace ASC_bla {
     enum class Ordering {
         ColMajor, RowMajor
@@ -117,30 +119,6 @@ public:
         }
     }
 };
-    template <Ordering ORD>
-    Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, ORD> b) {
-        if(b.Height()!=a.Width())
-            throw std::invalid_argument("Matrix dimension must match for multiplication");
-
-        Matrix<double> res{a.Height(),b.Width()};
-        for(int i=0;i<res.Height();i++){
-            for(int j=0;j<res.Width();j++){
-                auto result = SIMD<double,4>(0.);
-                int rest = b.Height%4;
-                for(int l=0; l<b.Height()/4; l++) {
-                    result = FMA(SIMD<double,4>(a.Data()+a.Dist()*i+4*l), SIMD<double,4>(b(0+4*l,j),b(1+4*l,j),b(2+4*l,j),b(3+4*l,j)), result);
-                }
-                double sum = HSum(result);
-                for(int l=rest; l>0; l--) {
-                    int og_index = b.Height()-rest;
-                    sum += a(i,og_index) * b(og_index,j);
-                }
-                res(i,j)=sum;
-            }
-        }
-
-        return res;
-    }
 
 template<typename T, Ordering ORD=Ordering::RowMajor>
 class Matrix : public MatrixView<T,ORD> {
@@ -206,6 +184,30 @@ MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>
     return m.Transpose();
 }
 
+template <Ordering ORD>
+Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, ORD> b) {
+    if(b.Height()!=a.Width())
+        throw std::invalid_argument("Matrix dimension must match for multiplication");
+
+    Matrix<double> res{a.Height(),b.Width()};
+    for(int i=0;i<res.Height();i++){
+        for(int j=0;j<res.Width();j++){
+            auto result = SIMD<double,4>(0.);
+            int rest = b.Height()%4;
+            for(int l=0; l<b.Height()/4; l++) {
+                result = FMA(SIMD<double,4>(a.Data()+a.Dist()*i+4*l), SIMD<double,4>(b(0+4*l,j),b(1+4*l,j),b(2+4*l,j),b(3+4*l,j)), result);
+            }
+            double sum = HSum(result);
+            for(int l=rest; l>0; l--) {
+                int og_index = b.Height()-rest;
+                sum += a(i,og_index) * b(og_index,j);
+            }
+            res(i,j)=sum;
+        }
+    }
+
+    return res;
+}
 
 template <typename T>
 Matrix<T> inverse(const MatrixView<T>& m ){
