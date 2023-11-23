@@ -13,18 +13,19 @@ Written in C++ and bound to python, TriadTitans BLA library combines the best of
 The library provides basic template classes **Vector** and **Matrix** and three levels of basic operations:
 
 =========== ===============================================================
-**B 1** Vector operations, e.g. :math:`y = \alpha*x + y`
-**B 2** Matrix-vector operations, e.g. :math:`y = \alpha*A*x + \alpha*beta*y`
-**B 3** Matrix-matrix operations, e.g. :math:`C = \alpha*A*B + C`
+**Level 1** Vector operations, e.g. :math:`y = \alpha*x + y`
+**Level 2** Matrix-vector operations, e.g. :math:`y = \alpha*A*x + \alpha*beta*y`
+**Level 3** Matrix-matrix operations, e.g. :math:`C = \alpha*A*B + C`
 =========== ===============================================================
 
 Based on the beasic opertations and together with lapack even more complex operations are implementes possible.
 With TriadTitans BLA library you can do
+
 =========== ===============================================================
-**A 1** Inverting, e.g. :math:`C = \alpha*Inv(A)*B` (will soon be available for python)
-**A 2** Transposing e.g. :math:`C = \alpha*Transpose(A)*B (will soon be available for python)
-**A 3** LU Factorisation, e.g. :math:`y = \alpha*x + y` (will soon be available for python)
-**A 4** Calculating Eigenvalues, e.g. :math:`eigv = Eigenv(A)` (will soon be available for python)
+**Level 4** Inverting, e.g. :math:`C = \alpha*Inv(A)*B` (will soon be available for python)
+**Lavel 5** Transposing e.g. :math:`C = \alpha*Transpose(A)*B (will soon be available for python)
+**Level 6** LU Factorisation, e.g. :math:`y = \alpha*x + y` (will soon be available for python)
+**Level 7** Calculating Eigenvalues, e.g. :math:`eigv = Eigenv(A)` (will soon be available for python)
 =========== ===============================================================
 
 In the near future our library will also be able to solve partial and ordinary differential equations!
