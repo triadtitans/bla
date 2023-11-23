@@ -17,9 +17,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'ASC-bla'
-copyright = '2023, J. Schoeberl'
-author = 'J. Schoeberl'
+project = 'bla'
+copyright = '2023, TriadTitans GmbH'
+author = 'TriadTitans GmbH'
 
 
 # -- General configuration ---------------------------------------------------
