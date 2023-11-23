@@ -6,8 +6,18 @@
 Welcome to triadtitans-bla's documentation!
 ===================================
 
-bla is a C++ library for basic linear algebra operations.
-The library provides template classes **Vector** and **Matrix**.
+TriadTitans Basic Linear Algebra define a set of fundamental operations on vectors and matrices which can be used to create optimized higher-level linear algebra functionality.
+Written in C++ and bound to python, TriadTitans BLA library combines the best of both sides, as it unleashes the full power of your PC while still giving you the comfort of python programming.
+
+
+The library provides basic template classes **Vector** and **Matrix** and three levels of basic operations:
+
+=========== ===============================================================
+**Level 1** Vector operations, e.g. :math:`y = \alpha*x + y`
+**Level 2** Matrix-vector operations, e.g. :math:`y = \alpha*A*x + \alpha*beta*y`
+**Level 3** Matrix-matrix operations, e.g. :math:`C = \alpha*A*B + C`
+=========== ===============================================================
+
 
 Installation is via git-clone:
 
