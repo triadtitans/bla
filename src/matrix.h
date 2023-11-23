@@ -8,6 +8,7 @@
 
 #include "expression.h"
 #include "vector.h"
+#include "simd.h"
 
 namespace ASC_bla {
     enum class Ordering {

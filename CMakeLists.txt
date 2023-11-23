@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 3.20)
 project(ASC_bla)
 
 set (CMAKE_CXX_STANDARD 17)
+IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm") 
+set (pybind11_DIR venv/lib/python3.9/site-packages/pybind11/share/cmake/pybind11)
+ENDIF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
 
 include_directories(src)
+include_directories(HPC/src)
 
 find_package(Python 3.8 COMPONENTS Interpreter Development REQUIRED)
 
