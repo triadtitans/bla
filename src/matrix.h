@@ -184,27 +184,147 @@ MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>
     return m.Transpose();
 }
 
-template <Ordering ORD>
-Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, ORD> b) {
+template <size_t SW>
+auto InnerProduct4 (size_t n, double * px0, double * px1, double * px2, double * px3, double * py, size_t dy)
+{
+    SIMD<double,SW> sum0{0.0};
+    SIMD<double,SW> sum1{0.0};
+    SIMD<double,SW> sum2{0.0};
+    SIMD<double,SW> sum3{0.0};
+    for (size_t i = 0; i < n; i++)
+    {
+        // sum += px[i] * SIMD<double,SW>(py+i*dy);
+        SIMD<double,SW> yi(py+i*dy);
+        sum0 = FMA(SIMD<double,SW>(px0[i]), yi, sum0);
+        sum1 = FMA(SIMD<double,SW>(px1[i]), yi, sum1);
+        sum2 = FMA(SIMD<double,SW>(px2[i]), yi, sum2);
+        sum3 = FMA(SIMD<double,SW>(px3[i]), yi, sum3);
+    }
+    return std::tuple(sum0, sum1, sum2, sum3);
+}
+
+template <size_t SW>
+auto InnerProduct (size_t n, double * px, double * py, size_t dy)
+{
+  SIMD<double,SW> sum{0.0};
+  for (size_t i = 0; i < n; i++)
+    {
+      // sum += px[i] * SIMD<double,SW>(py+i*dy);
+      sum = FMA(SIMD<double,SW>(px[i]), SIMD<double,SW>(py+i*dy), sum);
+    }
+  return sum;
+}
+
+
+Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, Ordering::RowMajor> b) {
     if(b.Height()!=a.Width())
         throw std::invalid_argument("Matrix dimension must match for multiplication");
 
-    Matrix<double> res{a.Height(),b.Width()};
-    for(int i=0;i<res.Height();i++){
-        for(int j=0;j<res.Width();j++){
-            auto result = SIMD<double,4>(0.);
-            int rest = b.Height()%4;
-            for(int l=0; l<b.Height()/4; l++) {
-                result = FMA(SIMD<double,4>(a.Data()+a.Dist()*i+4*l), SIMD<double,4>(b(0+4*l,j),b(1+4*l,j),b(2+4*l,j),b(3+4*l,j)), result);
-            }
-            double sum = HSum(result);
-            for(int l=rest; l>0; l--) {
-                int og_index = b.Height()-rest;
-                sum += a(i,og_index) * b(og_index,j);
-            }
-            res(i,j)=sum;
+    size_t n = a.Width();
+    size_t m = a.Height();
+    size_t l = b.Width();
+
+    Matrix<double> res{m,l};
+    size_t zeilenrest = m % 4;
+    size_t spaltenrest = l % 12;
+
+    for (size_t i = 0; i < m / 4; i++) { // Viererpaare von Zeilen
+        size_t zeilendist = a.Dist();
+        auto zeilenstart = a.Data() + i * 4 * zeilendist;
+
+        for (size_t j = 0; j < l / 12; j++) {
+            // inner prod
+            size_t spaltenindex = j * 12;
+            auto ptr = b.Data() + spaltenindex;
+
+            auto [sum0, sum1, sum2, sum3] = InnerProduct4<12>(
+                n, 
+                zeilenstart, 
+                zeilenstart + zeilendist,
+                zeilenstart + 2 * zeilendist,
+                zeilenstart + 3 * zeilendist,
+                ptr,
+                b.Dist()
+            );
+
+            sum0.Store(res.Data() + (i*4)*res.Dist() + spaltenindex);
+            sum1.Store(res.Data() + (i*4+1)*res.Dist() + spaltenindex);
+            sum2.Store(res.Data() + (i*4+2)*res.Dist() + spaltenindex);
+            sum3.Store(res.Data() + (i*4+3)*res.Dist() + spaltenindex);
+        }
+        size_t lastindex = (l/12)*12;
+        
+        for (size_t j = lastindex; j < lastindex + spaltenrest; j++) {
+            // rest spalten mit kleinem simd
+            auto [sum0, sum1, sum2, sum3] = InnerProduct4<1>(
+                n,
+                zeilenstart,
+                zeilenstart + zeilendist,
+                zeilenstart + 2 * zeilendist,
+                zeilenstart + 3 * zeilendist,
+                b.Data()+j,
+                b.Dist()
+            );
+
+            sum0.Store(res.Data() + (i*4)*res.Dist() + j);
+            sum1.Store(res.Data() + (i*4+1)*res.Dist() + j);
+            sum2.Store(res.Data() + (i*4+2)*res.Dist() + j);
+            sum3.Store(res.Data() + (i*4+3)*res.Dist() + j);
         }
     }
+
+    size_t lastrow = (n/4)*4;
+    // zeilenrest
+    for (size_t i = lastrow; i < lastrow + zeilenrest; i++) { // einzelne rest-zeilen
+        size_t zeilendist = a.Dist();
+        auto zeilenstart = a.Data() + i * zeilendist;
+
+        for (size_t j = 0; j < l / 12; j++) {
+            // inner prod
+            size_t spaltenindex = j * 12;
+            auto ptr = b.Data() + spaltenindex;
+
+            auto sum = InnerProduct<12>(
+                n, 
+                zeilenstart,
+                ptr,
+                b.Dist()
+            );
+
+            sum.Store(res.Data() + i*res.Dist() + spaltenindex);
+        }
+
+        size_t lastindex = (l/12)*12;
+        for (size_t j = lastindex; j < lastindex + spaltenrest; j++) {
+            // rest spalten mit kleinem simd
+            auto sum = InnerProduct<1>(
+                n,
+                zeilenstart,
+                b.Data()+j,
+                b.Dist()
+            );
+
+            sum.Store(res.Data() + i*res.Dist() + j);
+        }
+    }
+
+
+    // Matrix<double> res{a.Height(),b.Width()};
+    // for(int i=0;i<res.Height();i++){
+    //     for(int j=0;j<res.Width();j++){
+    //         auto result = SIMD<double,4>(0.);
+    //         int rest = b.Height()%4;
+    //         for(int l=0; l<b.Height()/4; l++) {
+    //             result = FMA(SIMD<double,4>(a.Data()+a.Dist()*i+4*l), SIMD<double,4>(b(0+4*l,j),b(1+4*l,j),b(2+4*l,j),b(3+4*l,j)), result);
+    //         }
+    //         double sum = HSum(result);
+    //         for(int l=rest; l>0; l--) {
+    //             int og_index = b.Height()-rest;
+    //             sum += a(i,og_index) * b(og_index,j);
+    //         }
+    //         res(i,j)=sum;
+    //     }
+    // }
 
     return res;
 }

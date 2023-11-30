@@ -6,7 +6,7 @@
 #include <cmath>
 #include <stdlib.h>
 
-//#define RUN_TIMING
+//#define RUN_TIMINGS
 
 using namespace ASC_bla;
 using namespace std;
@@ -72,13 +72,43 @@ int main()
   cout << "x = " << x << endl;
   cout << "y = " << y << endl;
   
-  AddVectorLapack (2, x, y);
+  AddVectorLapack (2,x,y);
   cout << "y+2*x = " << y << endl;
 
   MultMatMatLapack(p,q,c);
   std::cout << c;
 
   #ifdef RUN_TIMINGS
+  cout << "lapack" << std::endl;
+    srand(0);
+  for(int l=1; l<=3;l++){
+    int n = pow(10,l);
+    Matrix<double> m1(n,n);
+    Matrix<double> m2(n,n);
+    Matrix<double> m3(n,n);
+    for(int i=0;i<n;i++){
+      for(int j=0;j<n;j++){
+        m1(i,j)=(double)(rand())/RAND_MAX;
+        m2(i,j)=(double)(rand())/RAND_MAX;
+        m3(i,j)=0;
+      }
+    }
+    size_t flops = n*n*n;
+    size_t runs = size_t (1e9 / flops) + 1;
+
+    auto start = std::chrono::high_resolution_clock::now();
+    for (size_t i = 0; i < runs; i++){
+      // lapack
+      MultMatMatLapack(m1,m2,m3);
+    }
+    auto end = std::chrono::high_resolution_clock::now();
+    double time = std::chrono::duration<double>(end-start).count();
+          
+    cout << "n = " << n << ", time = " << time << " s, GFlops = " 
+        << (flops*runs)/time*1e-9 << endl;
+  }
+
+  cout << "fastMul" << std::endl;
   srand(0);
   for(int l=1; l<=3;l++){
     int n = pow(10,l);
@@ -97,9 +127,8 @@ int main()
 
     auto start = std::chrono::high_resolution_clock::now();
     for (size_t i = 0; i < runs; i++){
-      MultMatMatLapack(m1,m2,m3);
-      //m3 = m1 * m2;
-      //m3.Width();
+      // fastmul
+      m3 = fastMul(m1, m2);
     }
     auto end = std::chrono::high_resolution_clock::now();
     double time = std::chrono::duration<double>(end-start).count();
@@ -107,6 +136,8 @@ int main()
     cout << "n = " << n << ", time = " << time << " s, GFlops = " 
         << (flops*runs)/time*1e-9 << endl;
   }
+
+  cout << "standard" << std::endl;
   for(int l=1; l<=3;l++){
     int n = pow(10,l);
     Matrix<double> m1(n,n);
@@ -129,6 +160,8 @@ int main()
     auto end = std::chrono::high_resolution_clock::now();
     double time = std::chrono::duration<double>(end-start).count();
           
+    cerr << m3;
+
     cout << "n = " << n << ", time = " << time << " s, GFlops = " 
         << (flops*runs)/time*1e-9 << endl;
     }
