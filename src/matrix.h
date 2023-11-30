@@ -67,6 +67,11 @@ public:
         return *this;
     }
 
+    VectorView<T> Diag() {
+        int size = std::min(Width(),Height());
+        return VectorView( size, _dist, _data);
+    }
+
     auto View() const { return MatrixView(_height,_width,_data, _dist); }
 
     size_t Height() const { return _height; }
