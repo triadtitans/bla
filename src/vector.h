@@ -30,13 +30,13 @@ namespace ASC_bla {
         }
 
         template<typename TB>
-        VectorView &operator=+(const VecExpr<TB> &v2) {
+        VectorView &operator+=(const VecExpr<TB> &v2) {
             Vector<T> res{Size()};
             res = (*this)+v2;
             return (*this)=res;
         }
         template<typename TB>
-        VectorView &operator=+(const VecExpr<TB> &v2) {
+        VectorView &operator-=(const VecExpr<TB> &v2) {
             Vector<T> res{Size()};
             res = (*this)-v2;
             return (*this)=res;
