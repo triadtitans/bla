@@ -29,6 +29,19 @@ namespace ASC_bla {
             return *this;
         }
 
+        template<typename TB>
+        VectorView &operator=+(const VecExpr<TB> &v2) {
+            Vector<T> res{Size()};
+            res = (*this)+v2;
+            return (*this)=res;
+        }
+        template<typename TB>
+        VectorView &operator=+(const VecExpr<TB> &v2) {
+            Vector<T> res{Size()};
+            res = (*this)-v2;
+            return (*this)=res;
+        }
+
         VectorView & operator= (T scal)
         {
           for (size_t i = 0; i < size_; i++)

@@ -40,6 +40,23 @@ public:
         }
         return *this;
     }
+    template<typename TB>
+    MatrixView &operator+=(const MatrixExpr<TB> &m2) {
+        if(m2.Height() == Height() && m1.Width() == Width())
+        Matrix<TB> res{Width(), Height()};
+        res = m2 + *this;
+
+        return (*this)=res; 
+    }
+    template<typename TB>
+    MatrixView &operator-=(const MatrixExpr<TB> &m2) {
+        if(m2.Height() == Height() && m1.Width() == Width())
+        Matrix<TB> res{Width(), Height()};
+        res =  *this-m2;
+
+        return (*this)=res; 
+    }
+
 
     MatrixView &operator=(T scal) {
         for (size_t col = 0; col < _width; col++){
