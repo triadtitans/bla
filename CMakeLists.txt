@@ -3,7 +3,7 @@ project(ASC_bla)
 
 set (CMAKE_CXX_STANDARD 17)
 IF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm") 
-set (pybind11_DIR venv/lib/python3.9/site-packages/pybind11/share/cmake/pybind11)
+set (pybind11_DIR ../venv/lib/python3.9/site-packages/pybind11/share/cmake/pybind11)
 ENDIF(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm")
 
 include_directories(src)

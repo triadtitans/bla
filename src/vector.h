@@ -7,9 +7,13 @@
 
 
 namespace ASC_bla {
+    template<typename T=double, typename TDIST = std::integral_constant<size_t, 1> >
+    class VectorView;
+    template<typename T=double>
+    class Vector;
 
 
-    template<typename T, typename TDIST = std::integral_constant<size_t, 1> >
+    template<typename T, typename TDIST>
     class VectorView : public VecExpr<VectorView<T, TDIST>> {
     protected:
         T *data_;
@@ -35,10 +39,15 @@ namespace ASC_bla {
             res = (*this)+v2;
             return (*this)=res;
         }
+        VectorView &operator*=(T s) {
+            Vector<T> res{Size()};
+            res = s*(*this);
+            return (*this)=res;
+        }
         template<typename TB>
         VectorView &operator-=(const VecExpr<TB> &v2) {
             Vector<T> res{Size()};
-            res = (*this)-v2;
+            res = (*this)+ (-1)*v2;
             return (*this)=res;
         }
 
@@ -120,7 +129,14 @@ namespace ASC_bla {
             ost << ", " << v(i);
         return ost;
     }
-
+    template<typename T>
+    T Norm(VectorView<T> v){
+        T sum;
+        for(int i=0;i<v.Size();i++)
+            sum+=v(i)*v(i);
+        return sqrt(sum);
+        
+    }
 }
 
 #endif

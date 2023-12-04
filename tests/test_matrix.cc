@@ -10,7 +10,7 @@ int main()
   size_t n = 10;
   bla::Matrix<double> m(30,30);
   bla::Matrix<double> q(30,30);
-  srand(7893549034785);
+  srand(7893549034785L);
 
   for (int i = 0; i < 30; i++) {
     for (int j = 0; j < 30; j++) {

@@ -17,7 +17,13 @@ namespace ASC_bla {
         ColMajor, RowMajor
     };
 
-template <typename T, Ordering ORD = Ordering::RowMajor>
+template <typename T=double, Ordering ORD=Ordering::RowMajor>
+class MatrixView;
+
+template<typename T=double, Ordering ORD=Ordering::RowMajor>
+class Matrix;
+
+template <typename T, Ordering ORD>
 class MatrixView : public MatrixExpr<MatrixView<T,ORD>>{
 protected:
     T* _data;
@@ -42,19 +48,44 @@ public:
     }
     template<typename TB>
     MatrixView &operator+=(const MatrixExpr<TB> &m2) {
-        if(m2.Height() == Height() && m1.Width() == Width())
-        Matrix<TB> res{Width(), Height()};
-        res = m2 + *this;
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)+= m2(row, col);
+            }
+        }
+        return *this;
+    }
+    
+    template<typename TB>
+    MatrixView &operator*=(const MatrixExpr<TB> &m2) {
+        if(m2.Height() == Height() && m2.Width() == Width()) {
+            throw std::invalid_argument("incompatible shapes");
+        }
+        Matrix<TB> res{ Height(), Width()};
+        res = m2 * *this;
+
+        return (*this)=res; 
+    }
+    MatrixView &operator*=(T s) {
+        Matrix<T> res{Width(), Height()};
+        res =  s*(*this) ;
 
         return (*this)=res; 
     }
     template<typename TB>
     MatrixView &operator-=(const MatrixExpr<TB> &m2) {
-        if(m2.Height() == Height() && m1.Width() == Width())
-        Matrix<TB> res{Width(), Height()};
-        res =  *this-m2;
-
-        return (*this)=res; 
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)-= m2(row, col);
+            }
+        }
+        return *this;
     }
 
 
@@ -67,9 +98,9 @@ public:
         return *this;
     }
 
-    VectorView<T> Diag() {
+    auto Diag() {
         int size = std::min(Width(),Height());
-        return VectorView( size, _dist, _data);
+        return VectorView<T, size_t>( size, _dist+1, _data);
     }
 
     auto View() const { return MatrixView(_height,_width,_data, _dist); }
@@ -142,7 +173,7 @@ public:
     }
 };
 
-template<typename T, Ordering ORD=Ordering::RowMajor>
+template<typename T, Ordering ORD>
 class Matrix : public MatrixView<T,ORD> {
     typedef MatrixView<T> BASE;
     using BASE::_width;
@@ -174,14 +205,16 @@ public:
     }
 
 
-    ~Matrix() { delete[] _data; }
+    ~Matrix() {
+        delete[] _data;
+    }
 
     using BASE::operator=;
 
     Matrix &operator=(const Matrix &m2) {
-        _width = this->_width;
-        _height = this->_height;
-        _dist = this->_dist;
+        _width = m2->_width;
+        _height = m2->_height;
+        _dist = m2->_dist;
         for (size_t i = 0; i < _width*_height; i++){
             _data[i]=m2._data[i];
         }
@@ -189,10 +222,6 @@ public:
     }
 
     Matrix &operator=(Matrix &&m) {
-        _width = 0;
-        _height = 0;
-        _data = nullptr;
-        _dist = 0;
         std::swap(_height, m._height);
         std::swap(_width, m._width);
         std::swap(_data, m._data);
@@ -362,21 +391,19 @@ Matrix<T> inverse(const MatrixView<T>& m ){
             work(row,column+m.Height()) = (row==column) ? 1 : 0;
         }
     }
-    std::cout << work;
     for(size_t column=0; column < work.Height();column++){
         work.EnsureNonzero(column,column);
-        std::cout << work;
+
         work.Rows(column,column+1)=1.0/(work(column,column))*work.Rows(column,column+1);
         //work.RowMultiply(column,1/(work(column,column)));
-        std::cout << work;
+
         for(size_t row=0; row < work.Height();row++){
             if(row==column) continue;
             work.Rows(row, row+1) = work.Rows(row, row+1) + (-work(row,column))*work.Rows(column,column+1);
             //work = work.RowMulAdd(column,row,-work(row,column));
-            std::cout << work;
+
         }
     }
-    std::cout << work;
     Matrix<T> result = work.Cols(m.Width(),m.Width());
     return result;
 }
