@@ -175,7 +175,7 @@ public:
 
 template<typename T, Ordering ORD>
 class Matrix : public MatrixView<T,ORD> {
-    typedef MatrixView<T> BASE;
+    typedef MatrixView<T, ORD> BASE;
     using BASE::_width;
     using BASE::_height;
     using BASE::_data;

@@ -104,7 +104,12 @@ namespace ASC_bla {
 
         ~Vector() { delete[] data_; }
 
-        using BASE::operator=;
+        template<typename TB>
+        Vector &operator=(const VecExpr<TB> &v2) {
+            for (size_t i = 0; i < size_; i++)
+                data_[i] = v2(i);
+            return *this;
+        }
 
         Vector &operator=(const Vector &v2) {
             for (size_t i = 0; i < size_; i++)
