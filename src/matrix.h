@@ -189,7 +189,18 @@ public:
             : Matrix(m.Height(),m.Width()) {
         *this = m;
     }
-
+    template<typename TB>
+    Matrix &operator=(const MatrixExpr<TB> &m2) {
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)= m2(row, col);
+            }
+        }
+        return *this;
+    }
     Matrix(Matrix &&m)
             : MatrixView<T,ORD>{0,0, nullptr,0} {
         std::swap(_width, m._width);
@@ -209,7 +220,7 @@ public:
         delete[] _data;
     }
 
-    using BASE::operator=;
+ 
 
     Matrix &operator=(const Matrix &m2) {
         _width = m2->_width;
