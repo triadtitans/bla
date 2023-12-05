@@ -2,7 +2,7 @@
 #define FILE_VECTOR_H
 
 #include <iostream>
-
+#include <math.h>
 #include "expression.h"
 
 
