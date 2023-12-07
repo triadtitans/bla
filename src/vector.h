@@ -162,7 +162,7 @@ namespace ASC_bla {
     }
     template<typename T>
     T Norm(VectorView<T> v){
-        T sum;
+        T sum=0;
         for(int i=0;i<v.Size();i++)
             sum+=v(i)*v(i);
         return sqrt(sum);
