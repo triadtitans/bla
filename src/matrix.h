@@ -34,6 +34,36 @@ public:
     MatrixView(size_t height, size_t width, T* data, size_t dist):
         _data{data},_width{width},_height{height},_dist{dist} {};
 
+    MatrixView(const MatrixView& m): // copy ctor
+        _data{m._data},_width{m._width},_height{m._height},_dist{m._dist} {};
+
+    MatrixView(const MatrixView&& m): // mov ctor
+        _data{m._data},_width{m._width},_height{m._height},_dist{m._dist} {};
+
+    MatrixView &operator=(const MatrixView &m2) { //copy assign
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)= m2(row, col);
+            }
+        }
+        return *this;
+    }
+
+    MatrixView &operator=(MatrixView &&m2) { //mov assign
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)= m2(row, col);
+            }
+        }
+        return *this;
+    }
+
     template<typename TB>
     MatrixView &operator=(const MatrixExpr<TB> &m2) {
         if(_width != m2.Width() && _height != m2.Height()){

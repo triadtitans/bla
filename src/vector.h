@@ -26,6 +26,30 @@ namespace ASC_bla {
         VectorView(size_t size, TDIST dist, T *data)
                 : data_(data), size_(size), dist_(dist) {}
 
+        VectorView(const VectorView& v) // Copy ctor
+                : data_(v.data_), size_(v.size_), dist_(v.dist_) {}
+
+        VectorView(const VectorView&& v) // Move ctor
+                : data_(v.data_), size_(v.size_), dist_(v.dist_) {}
+
+        VectorView &operator=(const VectorView &v2) { // copy assign
+            if(size_ != v2.size_)
+                throw std::invalid_argument("Vector size must mazch");
+            for (size_t i = 0; i < size_; i++)
+                data_[dist_ * i] = v2(i);
+            return *this;
+        }
+
+
+        VectorView &operator=(VectorView &&v2) { // move assign
+            if(size_ != v2.size_)
+                throw std::invalid_argument("Vector size must mazch");
+            for (size_t i = 0; i < size_; i++)
+                data_[dist_ * i] = v2(i);
+            return *this;
+        }
+
+
         template<typename TB>
         VectorView &operator=(const VecExpr<TB> &v2) {
             for (size_t i = 0; i < size_; i++)
