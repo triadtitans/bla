@@ -126,7 +126,9 @@ namespace ASC_bla {
         }
 
 
-        ~Vector() { delete[] data_; }
+        ~Vector() {
+             delete[] data_; 
+        }
 
         template<typename TB>
         Vector &operator=(const VecExpr<TB> &v2) {

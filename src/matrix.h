@@ -41,7 +41,7 @@ public:
         _data{m._data},_width{m._width},_height{m._height},_dist{m._dist} {};
 
     MatrixView &operator=(const MatrixView &m2) { //copy assign
-        if(_width != m2.Width() && _height != m2.Height()){
+        if(_width != m2.Width() || _height != m2.Height()){
             throw std::invalid_argument("Matrix dimension must match for copy");
         }
         for (size_t col = 0; col < _width; col++){
@@ -53,7 +53,7 @@ public:
     }
 
     MatrixView &operator=(MatrixView &&m2) { //mov assign
-        if(_width != m2.Width() && _height != m2.Height()){
+        if(_width != m2.Width() || _height != m2.Height()){
             throw std::invalid_argument("Matrix dimension must match for copy");
         }
         for (size_t col = 0; col < _width; col++){
@@ -66,7 +66,7 @@ public:
 
     template<typename TB>
     MatrixView &operator=(const MatrixExpr<TB> &m2) {
-        if(_width != m2.Width() && _height != m2.Height()){
+        if(_width != m2.Width() || _height != m2.Height()){
             throw std::invalid_argument("Matrix dimension must match for copy");
         }
         for (size_t col = 0; col < _width; col++){
@@ -78,7 +78,7 @@ public:
     }
     template<typename TB>
     MatrixView &operator+=(const MatrixExpr<TB> &m2) {
-        if(_width != m2.Width() && _height != m2.Height()){
+        if(_width != m2.Width() || _height != m2.Height()){
             throw std::invalid_argument("Matrix dimension must match for copy");
         }
         for (size_t col = 0; col < _width; col++){
@@ -91,7 +91,7 @@ public:
     
     template<typename TB>
     MatrixView &operator*=(const MatrixExpr<TB> &m2) {
-        if(m2.Height() == Height() && m2.Width() == Width()) {
+        if(m2.Height() == Height() || m2.Width() == Width()) {
             throw std::invalid_argument("incompatible shapes");
         }
         Matrix<TB> res{ Height(), Width()};
@@ -107,7 +107,7 @@ public:
     }
     template<typename TB>
     MatrixView &operator-=(const MatrixExpr<TB> &m2) {
-        if(_width != m2.Width() && _height != m2.Height()){
+        if(_width != m2.Width() || _height != m2.Height()){
             throw std::invalid_argument("Matrix dimension must match for copy");
         }
         for (size_t col = 0; col < _width; col++){
@@ -440,7 +440,7 @@ Matrix<T> inverse(const MatrixView<T>& m ){
 
         for(size_t row=0; row < work.Height();row++){
             if(row==column) continue;
-            work.Rows(row, row+1) = work.Rows(row, row+1) + (-work(row,column))*work.Rows(column,column+1);
+            work.Rows(row, 1) = work.Rows(row, 1) + (-work(row,column))*work.Rows(column,1);
             //work = work.RowMulAdd(column,row,-work(row,column));
 
         }
