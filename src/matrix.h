@@ -100,7 +100,7 @@ public:
         return (*this)=res; 
     }
     MatrixView &operator*=(T s) {
-        Matrix<T> res{Width(), Height()};
+        Matrix<T> res{Height(), Width()};
         res =  s*(*this) ;
 
         return (*this)=res; 
@@ -144,7 +144,7 @@ public:
         return MatrixView(
             this->Height(),
             next,
-            this->_data + first,
+            &(*this)(0, first),
             this->_dist
         );
     }
@@ -153,7 +153,7 @@ public:
         return MatrixView(
             next,
             this->Width(),
-            this->_data + this->_dist * first,
+            &(*this)(first, 0),
             this->_dist
         );
     }
