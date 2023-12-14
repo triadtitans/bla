@@ -168,6 +168,21 @@ namespace ASC_bla {
         return sqrt(sum);
         
     }
+
+    template<size_t S, typename T>
+    class Vec : public VecExpr<Vec<S,T>> {
+        T data[S];
+    public:
+        T & operator()(size_t row) {
+            return data[row];
+        }
+
+        const T & operator()(size_t row) const {
+            return data[row];
+        }
+
+        size_t Size() const { return S; }
+    };
 }
 
 #endif

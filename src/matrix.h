@@ -213,12 +213,15 @@ class Matrix : public MatrixView<T,ORD> {
 
 public:
     Matrix(size_t height, size_t width)
-            : MatrixView<T,ORD>(height, width, new T[height*width](), ORD == Ordering::RowMajor ? width : height ) {}
+            : MatrixView<T,ORD>(height, width, new T[height*width](), ORD == Ordering::RowMajor ? width : height ) {
+
+            }
 
     Matrix(const Matrix &m)
             : Matrix(m.Height(),m.Width()) {
         *this = m;
     }
+
     template<typename TB>
     Matrix &operator=(const MatrixExpr<TB> &m2) {
         if(_width != m2.Width() && _height != m2.Height()){
@@ -231,6 +234,7 @@ public:
         }
         return *this;
     }
+    
     Matrix(Matrix &&m)
             : MatrixView<T,ORD>{0,0, nullptr,0} {
         std::swap(_width, m._width);
@@ -250,25 +254,23 @@ public:
         delete[] _data;
     }
 
- 
-
     Matrix &operator=(const Matrix &m2) {
-        _width = m2->_width;
-        _height = m2->_height;
-        _dist = m2->_dist;
+        _width = m2._width;
+        _height = m2._height;
+        _dist = m2._dist;
         for (size_t i = 0; i < _width*_height; i++){
             _data[i]=m2._data[i];
         }
         return *this;
     }
 
-    Matrix &operator=(Matrix &&m) {
-        std::swap(_height, m._height);
-        std::swap(_width, m._width);
-        std::swap(_data, m._data);
-        std::swap(_dist, m._dist);
-        return *this;
-    }
+    // Matrix &operator=(Matrix &&m) {
+    //     std::swap(_height, m._height);
+    //     std::swap(_width, m._width);
+    //     std::swap(_data, m._data);
+    //     std::swap(_dist, m._dist);
+    //     return *this;
+    // }
 };
 
 template<typename T, Ordering ORD>
