@@ -437,7 +437,7 @@ Matrix<T> inverse(const MatrixView<T>& m ){
     for(size_t column=0; column < work.Height();column++){
         work.EnsureNonzero(column,column);
 
-        work.Rows(column,column+1)=1.0/(work(column,column))*work.Rows(column,column+1);
+        work.Rows(column,1)=1.0/(work(column,column))*work.Rows(column,1);
         //work.RowMultiply(column,1/(work(column,column)));
 
         for(size_t row=0; row < work.Height();row++){
