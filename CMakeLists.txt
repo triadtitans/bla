@@ -24,6 +24,8 @@ target_sources (test_vector PUBLIC src/vector.h src/expression.h)
 add_executable (test_matrix tests/test_matrix.cc)
 target_sources (test_matrix PUBLIC src/vector.h src/matrix.h src/expression.h)
 
+add_executable (newton tests/newton.cc)
+target_sources (test_matrix PUBLIC src/vector.h src/matrix.h src/expression.h)
 
 set(BLA_SIZEOF_INTEGER 4)
 find_package(LAPACK REQUIRED)
