@@ -75,14 +75,49 @@ void Newton(S system, VectorView<double> u, double tol=0.00000001, int max_steps
 }
 
 
+
+template <typename S>
+void NewtonC1(S system, VectorView<double> u, VectorView<double> sol, int max_steps=10){
+    Vector<double> u_new = u - inverse(system.Jacobian(u))*system.Eval(u);
+    double delta_old = Norm(u_new-u);
+    u = u_new;
+    for(int i=0; i<max_steps;i++){
+        Vector<double> u_new = u - inverse(system.Jacobian(u))*system.Eval(u);
+        double delta = Norm(u_new-u);
+        u = u_new;
+        delta_old = delta;
+        double err = Norm(u-sol);
+        std::cout << "Error in step " << i << ": " << err << std::endl;
+    }
+}
+
+
 int main(){
-    
+    int N=200;
     std::function sol = [](double x){return sin(M_PI*x);};
     std::function f = [](double x){return M_PI*M_PI*sin(M_PI*x)+pow(sin(M_PI*x),3);};
-    FiniteDifference sys(f,50);
-    Vector<double> u(50);
+    FiniteDifference sys(f,N);
+    Vector<double> u(N);
     //u=sys.Test(sol);
     Newton(sys,u);
-    std::cout << u << std::endl;
+    std::cout << u << std::endl<< std::endl;
     std::cout << sys.Test(sol) << std::endl;
+    u=0;
+    std::cout << "Initial vector all zeros" << std::endl;
+    NewtonC1(sys,u,sys.Test(sol));
+    for(int i=0;i<N;i++)
+        u(i)=(double) rand()/RAND_MAX; //Zwischen 0 und 1
+      std::cout << "Initial vector random" << std::endl;
+    NewtonC1(sys,u,sys.Test(sol));
+    u = sys.Test(sol);
+      std::cout << "Initial vector solution" << std::endl;
+    NewtonC1(sys,u,sys.Test(sol));
+    //Man sieht Newton konvergiert immer in 1 bis 2 Schritten
+    for(int i=2; i<10;i++){
+        Vector<double> u(i*20);
+        FiniteDifference sys(f,i*20);
+        Newton(sys,u);
+        std::cout << "Error with " << i*20 << " time steps: "<< Norm(u-sys.Test(sol)) << std::endl<< std::endl;
+    }
+
 }
