@@ -106,7 +106,7 @@ namespace ASC_bla {
         using BASE::data_;
     public:
         Vector(size_t size)
-                : VectorView<T>(size, new T[size]) { ; }
+                : VectorView<T>(size, new T[size]()) { ; }
 
         Vector(const Vector &v)
                 : Vector(v.Size()) {
