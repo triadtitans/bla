@@ -132,13 +132,6 @@ namespace ASC_bla {
 
         size_t Size() const { return a_.Size(); }
     };
-
-    template<typename TA, typename TB>
-    auto operator+(const VecExpr<TA> &a, const VecExpr<TB> &b) {
-        return SumVecExpr(a.Upcast(), b.Upcast());
-    }
-
-
     template<typename TSCAL, typename TV>
     class ScaleVecExpr : public VecExpr<ScaleVecExpr<TSCAL, TV>> {
         TSCAL scal_;
@@ -150,6 +143,17 @@ namespace ASC_bla {
 
         size_t Size() const { return vec_.Size(); }
     };
+
+    template<typename TA, typename TB>
+    auto operator+(const VecExpr<TA> &a, const VecExpr<TB> &b) {
+        return SumVecExpr(a.Upcast(), b.Upcast());
+    }
+    template<typename TA, typename TB>
+    auto operator-(const VecExpr<TA> &a, const VecExpr<TB> &b) {
+        return SumVecExpr(a.Upcast(), ScaleVecExpr<double, TB>(-1, b.Upcast()));
+    }
+
+
 
     template<typename T>
     auto operator*(double scal, const VecExpr<T> &v) {

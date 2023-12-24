@@ -105,7 +105,7 @@ namespace ASC_bla {
         using BASE::size_;
         using BASE::data_;
     public:
-        Vector(size_t size)
+        explicit Vector(size_t size) 
                 : VectorView<T>(size, new T[size]()) { ; }
 
         Vector(const Vector &v)
@@ -125,6 +125,12 @@ namespace ASC_bla {
             *this = v;
         }
 
+        Vector & operator= (T scal)
+        {
+          for (size_t i = 0; i < size_; i++)
+            data_[i] = scal;
+          return *this;
+        }
 
         ~Vector() {
              delete[] data_; 
@@ -161,8 +167,8 @@ namespace ASC_bla {
         return ost;
     }
     template<typename T>
-    T Norm(VectorView<T> v){
-        T sum=0;
+    auto Norm(const VecExpr<T>& v){
+        decltype(v(0)) sum=0;
         for(int i=0;i<v.Size();i++)
             sum+=v(i)*v(i);
         return sqrt(sum);
