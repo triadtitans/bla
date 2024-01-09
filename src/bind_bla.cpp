@@ -62,6 +62,31 @@ PYBIND11_MODULE(bla, m) {
         }))
     ;
 
+    py::class_<Vec<3>> (m, "Vec3")
+      .def(py::init<>(), "create vector of fixed size 3")
+      .def("__len__", &Vec<3>::Size,
+           "return size of vector")
+      
+      .def("__setitem__", [](Vec<3> & self, int i, double v) {
+        if (i < 0) i += self.Size();
+        if (i < 0 || i >= self.Size()) throw py::index_error("vector index out of range");
+        self(i) = v;
+      })
+      .def("__getitem__", [](Vec<3> & self, int i) { return self(i); })
+      
+      .def("__setitem__", [](Vec<3> & self, int i, double val)
+      {
+        self(i) = val;
+      })
+      
+      .def("__str__", [](const Vec<3> & self)
+      {
+        std::stringstream str;
+        str << self;
+        return str.str();
+      })
+    ;
+
     py::class_<Matrix<double,Ordering::RowMajor>> (m, "Matrix", py::buffer_protocol())
       .def(py::init<size_t,size_t>(),
            py::arg("height"), py::arg("width"), "create matrix of given size")
