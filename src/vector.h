@@ -12,7 +12,6 @@ namespace ASC_bla {
     template<typename T=double>
     class Vector;
 
-
     template<typename T, typename TDIST>
     class VectorView : public VecExpr<VectorView<T, TDIST>> {
     protected:
@@ -68,6 +67,9 @@ namespace ASC_bla {
             res = s*(*this);
             return (*this)=res;
         }
+        VectorView &operator/=(T s) {
+            return ((*this)*=(1./s)); 
+        }
         template<typename TB>
         VectorView &operator-=(const VecExpr<TB> &v2) {
             Vector<T> res{Size()};
@@ -95,7 +97,6 @@ namespace ASC_bla {
         auto Slice(size_t first, size_t slice) const {
             return VectorView<T, size_t>(size_ / slice, dist_ * slice, data_ + first * dist_);
         }
-
     };
 
 
@@ -179,6 +180,32 @@ namespace ASC_bla {
     class Vec : public VecExpr<Vec<S,T>> {
         T data[S];
     public:
+        Vec() {
+        }
+
+        Vec(T init) {
+            for (int i = 0; i < S; i++) {
+                data[i] = init;
+            }
+        }
+
+        template<typename TB>
+        Vec(VecExpr<TB> v) {
+            for (int i = 0; i < S; i++) {
+                data[i] = v(i);
+            }
+        }
+
+        Vec(std::initializer_list<T> values) {
+            size_t i = 0;
+            for (T val : values) {
+                if (i >= S) {
+                    break;
+                }
+                data[i++] = val;
+            }
+        }
+
         T & operator()(size_t row) {
             return data[row];
         }

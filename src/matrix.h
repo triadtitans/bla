@@ -34,6 +34,9 @@ public:
     MatrixView(size_t height, size_t width, T* data, size_t dist):
         _data{data},_width{width},_height{height},_dist{dist} {};
 
+    MatrixView(size_t height, size_t width, T* data):
+        _data{data},_width{width},_height{height},_dist{ORD == Ordering::RowMajor ? width : height} {};
+
     MatrixView(const MatrixView& m): // copy ctor
         _data{m._data},_width{m._width},_height{m._height},_dist{m._dist} {};
 
@@ -105,6 +108,10 @@ public:
 
         return (*this)=res; 
     }
+    MatrixView &operator/=(T s) {
+        return ((*this)*=(1./s)); 
+    }
+
     template<typename TB>
     MatrixView &operator-=(const MatrixExpr<TB> &m2) {
         if(_width != m2.Width() || _height != m2.Height()){
@@ -424,6 +431,11 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
 }
 
 template <typename T>
+auto AsMatrix (VectorView<T> vec, size_t h, size_t w) {
+    return MatrixView<T> (h,w,vec.Data());
+}
+
+template <typename T>
 Matrix<T> inverse(const MatrixView<T>& m ){
     if(m.Height() != m.Width())
         throw std::invalid_argument("Only square matrixes allowed");
@@ -450,6 +462,5 @@ Matrix<T> inverse(const MatrixView<T>& m ){
     Matrix<T> result = work.Cols(m.Width(),m.Width());
     return result;
 }
-
 }
 #endif
