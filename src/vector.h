@@ -190,7 +190,7 @@ namespace ASC_bla {
         }
 
         template<typename TB>
-        Vec(VecExpr<TB> v) {
+        Vec(const VecExpr<TB> &v) {
             for (int i = 0; i < S; i++) {
                 data[i] = v(i);
             }
