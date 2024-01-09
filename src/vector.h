@@ -98,14 +98,15 @@ namespace ASC_bla {
             return VectorView<T, size_t>(size_ / slice, dist_ * slice, data_ + first * dist_);
         }
     };
-    template <typename T>
-    auto operator*(VecExpr<T> a,VecExpr<T> b){
+    template <typename TA,typename TB>
+    auto operator*(const VecExpr<TA>& a,const VecExpr<TB>& b){
         std::remove_cv_t<std::remove_reference_t<decltype(a(0))>> sum = 0;
         for(size_t i=0; i<a.Size();i++){
             sum += a(i)*b(i);
         }
         return sum;
     }
+
 
     template<typename T>
     class Vector : public VectorView<T> {
