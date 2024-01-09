@@ -175,7 +175,7 @@ namespace ASC_bla {
         
     }
 
-    template<size_t S, typename T>
+    template<size_t S, typename T = double>
     class Vec : public VecExpr<Vec<S,T>> {
         T data[S];
     public:
