@@ -60,6 +60,8 @@ namespace ASC_bla {
         size_t Height() const { return _a.Height(); }
     };
 
+
+
     template<typename T>
     auto operator*(double scal, const MatrixExpr<T> &m) {
         return ScaleMatrixExpr(m.Upcast(),scal);
@@ -121,6 +123,26 @@ namespace ASC_bla {
         return MatrixMulVecExpr(m.Upcast(), v.Upcast());
     }
 
+    template<typename TA>
+    class TransposeMatExpr : public MatrixExpr<TransposeMatExpr<TA>>{
+        TA _a;
+    public:
+        TransposeMatExpr(TA a):_a(a){}
+        auto operator()(size_t row, size_t col) const { return _a(col,row); }
+        size_t Width() const { return _a.Height(); }
+        size_t Height() const { return _a.Width(); }
+    };
+
+  
+    class IdMatExpr : public MatrixExpr<IdMatExpr>{
+        int dim;
+    public:
+        IdMatExpr(int _dim):dim(_dim){}
+        auto operator()(size_t row, size_t col) const { return (row==col)?1:0; }
+        size_t Width() const { return dim; }
+        size_t Height() const { return dim; }
+    };
+    
     template<typename TA, typename TB>
     class SumVecExpr : public VecExpr<SumVecExpr<TA, TB>> {
         TA a_;
