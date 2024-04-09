@@ -462,5 +462,15 @@ Matrix<T> inverse(const MatrixView<T>& m ){
     Matrix<T> result = work.Cols(m.Width(),m.Width());
     return result;
 }
+
+template<typename T>
+Matrix<T> Diagonal(size_t height, T el) {
+    Matrix<T> eye(height, height);
+
+    eye.Diag() = el;
+
+    return eye;
+}
+
 }
 #endif

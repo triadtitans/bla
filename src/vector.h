@@ -100,7 +100,7 @@ namespace ASC_bla {
     };
     template <typename TA,typename TB>
     auto operator*(const VecExpr<TA>& a,const VecExpr<TB>& b){
-        std::remove_cv_t<std::remove_reference_t<decltype(a(0))>> sum = 0;
+        std::remove_cv_t<std::remove_reference_t<decltype(a(0)*b(0))>> sum = 0;
         for(size_t i=0; i<a.Size();i++){
             sum += a(i)*b(i);
         }

@@ -49,6 +49,29 @@ namespace ASC_bla {
         size_t Height() const { return a_.Height(); }
     };
 
+    template<typename TA, typename TB>
+    class SubstMatrixExpr : public MatrixExpr<SubstMatrixExpr<TA, TB>> {
+        TA a_;
+        TB b_;
+    public:
+        SubstMatrixExpr(TA a, TB b):a_(a),b_(b){}
+        auto operator()(size_t row, size_t col) const {
+            /*std::cout << "start substract" << "\n";
+            std::cout << "row:" << row << " col:" << col << "\n"; 
+            //std::cout << "a" << "\n" << a_ << "\n";
+            std::cout << "b" << "\n" << b_ << "\n";*/
+
+            return a_(row,col) - b_(row,col); 
+        }
+        size_t Width() const { return a_.Width(); }
+        size_t Height() const { return a_.Height(); }
+    };
+
+    template<typename TA, typename TB>
+    auto operator-(const MatrixExpr<TA> &m, const MatrixExpr<TB> &n) {
+        return SubstMatrixExpr(m.Upcast(), n.Upcast());
+    }
+
     template<typename TA, typename SCAL>
     class ScaleMatrixExpr : public MatrixExpr<ScaleMatrixExpr<TA, SCAL>>{
         TA _a;
@@ -82,7 +105,7 @@ namespace ASC_bla {
             if(a_.Width() != b_.Height()){
                 throw std::invalid_argument("Matrix dimension must match for multiplication");
             }
-            std::remove_cv_t<std::remove_reference_t<decltype(a_(0,0))>> sum = 0; //TODO: Zero element of T
+            std::remove_cv_t<std::remove_reference_t<decltype(a_(0,0)*b_(0,0))>> sum = 0; //TODO: Zero element of T
             for (size_t i = 0; i < a_.Width(); i++) {
                 sum = sum + (a_(row, i) * b_(i, col));
             }
@@ -108,7 +131,7 @@ namespace ASC_bla {
             if(_m.Width() != _v.Size()){
                 throw std::invalid_argument("Matrix/Vector dimension must match for multiplication");
             }
-            std::remove_cv_t<std::remove_reference_t<decltype(_v(0))>> sum = 0; //TODO: Zero element of ElemT
+            std::remove_cv_t<std::remove_reference_t<decltype(_m(0,0)*_v(0))>> sum = 0; //TODO: Zero element of ElemT
             for (size_t i = 0; i < _v.Size(); i++) {
                 sum += _m(row, i) * _v(i);
             }
