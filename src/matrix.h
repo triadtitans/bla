@@ -204,7 +204,7 @@ public:
             }
         }
         if(pivot == 0) {
-            cout << (*this) << endl;
+            std::cout << (*this) << std::endl;
             throw std::invalid_argument("Matrix singular");
         }
         RowSwap(column, pivot_i);
