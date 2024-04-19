@@ -186,15 +186,27 @@ public:
     };
     void RowSwap(size_t row,size_t dest){
         for(size_t i=0; i<Width();i++)
-            std::swap((*this)(dest,i),(*this)(row,i));
+            std::swap((*this)(dest, i),(*this)(row, i));
+    }
+
+    void ColSwap(size_t col, size_t dest) {
+        for(size_t i=0; i<Height(); i++) {
+            std::swap((*this)(dest, i), (*this)(col, i));
+        }
     }
     void EnsureNonzero(size_t row, size_t column){
-        size_t i=row;
-        for(; i<Height();i++)
-            if((*this)(i,column)!=0) break;
-        if(i==Height())
+        size_t pivot_i = row;
+        T pivot = std::abs((*this)(row,column));
+        for(size_t i = row+1; i<Height();i++) {
+            if(std::abs((*this)(i,column)) > pivot) {
+                pivot = (*this)(i, column);
+                pivot_i = i;
+            }
+        }
+        if(pivot == 0) {
             throw std::invalid_argument("Matrix singular");
-        RowSwap(column,i);
+        }
+        RowSwap(column, pivot_i);
     }
 
     T& operator()(size_t row, size_t column) {

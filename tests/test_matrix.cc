@@ -9,15 +9,22 @@ int main()
 {
   size_t n = 10;
   bla::Matrix<double> m(30,30);
-  bla::Matrix<double> q(30,30);
-  srand(7893549034785L);
+  bla::Matrix<double> q(3,3);
+  srand(7893);
 
   for (int i = 0; i < 30; i++) {
     for (int j = 0; j < 30; j++) {
       m(i,j) = (int)(10*(rand()/(double)RAND_MAX));
-      q(i,j) = (int)(10*(rand()/(double)RAND_MAX));
+      //q(i,j) = (int)(10*(rand()/(double)RAND_MAX));
     }
   }
+  q(1,0) = 7;
+  q(0,2) = 0.05;
+  q(0,1) = 0.01;
+  q(2,1) = 10;
+  q(2, 2)= 0.01;
+
+
   std::cout << m << std::endl << std::endl;
   std::cout << q;
 
@@ -29,18 +36,19 @@ int main()
 
 
 
+  bla::Matrix<double> q_inv = bla::inverse(q);
+  std::cout << "Inverse\n";
+  std::cout << q;
+  std::cout << q;
+  std::cout << bla::inverse(q);
+  std::cout << q*bla::inverse(q);
 
-  //std::cout << "Inverse\n";
-  //std::cout << q;
-  //std::cout << q;
-  //std::cout << bla::inverse(q);
-
-  std::cout << std::endl << std::endl;
+  /* std::cout << std::endl << std::endl;
   std::cout << "fastMul" << std::endl;
   std::cout << m*q;
   std::cout << std::endl << std::endl;
   std::cout << fastMul(m,q);
 
   std::cout << std::endl << "difference" << std::endl;
-  std::cout << (m*q) + (-1)*fastMul(m,q) << std::endl;
+  std::cout << (m*q) + (-1)*fastMul(m,q) << std::endl; */
 }
