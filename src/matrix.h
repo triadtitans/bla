@@ -199,11 +199,12 @@ public:
         T pivot = std::abs((*this)(row,column));
         for(size_t i = row+1; i<Height();i++) {
             if(std::abs((*this)(i,column)) > pivot) {
-                pivot = (*this)(i, column);
+                pivot = std::abs((*this)(i, column));
                 pivot_i = i;
             }
         }
         if(pivot == 0) {
+            cout << (*this) << endl;
             throw std::invalid_argument("Matrix singular");
         }
         RowSwap(column, pivot_i);
