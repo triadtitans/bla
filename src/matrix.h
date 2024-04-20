@@ -118,7 +118,7 @@ public:
         if(m2.Height() == Height() || m2.Width() == Width()) {
             throw std::invalid_argument("incompatible shapes");
         }
-        Matrix<TB> res{ Height(), Width()};
+        Matrix<TB> res (Height(), Width());
         res = m2 * *this;
 
         return (*this)=res; 
@@ -393,7 +393,7 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
     size_t m = a.Height();
     size_t l = b.Width();
 
-    Matrix<double> res{m,l};
+    Matrix<double> res(m,l);
     size_t zeilenrest = m % 4;
     size_t spaltenrest = l % 12;
 
@@ -507,7 +507,7 @@ template <typename T>
 Matrix<T> inverse(const MatrixView<T>& m ){
     if(m.Height() != m.Width())
         throw std::invalid_argument("Only square matrixes allowed");
-    Matrix<T> work{m.Height(),m.Height()*2};
+    Matrix<T> work(m.Height(),m.Height()*2);
     for(size_t row=0; row < work.Height();row++){
         for(size_t column=0; column < work.Height();column++){
             work(row,column)=m(row,column);

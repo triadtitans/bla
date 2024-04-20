@@ -67,12 +67,12 @@ namespace ASC_bla {
 
         template<typename TB>
         VectorView &operator+=(const VecExpr<TB> &v2) {
-            Vector<T> res{Size()};
+            Vector<T> res(Size());
             res = (*this)+v2;
             return (*this)=res;
         }
         VectorView &operator*=(T s) {
-            Vector<T> res{Size()};
+            Vector<T> res(Size());
             res = s*(*this);
             return (*this)=res;
         }
@@ -81,7 +81,7 @@ namespace ASC_bla {
         }
         template<typename TB>
         VectorView &operator-=(const VecExpr<TB> &v2) {
-            Vector<T> res{Size()};
+            Vector<T> res(Size());
             res = (*this)+ (-1)*v2;
             return (*this)=res;
         }

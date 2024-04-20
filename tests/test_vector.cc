@@ -72,8 +72,8 @@ int main()
   x.Range(1,5) = {11, 12, 13, 14};
   std::cout << "x = " << x << std::endl;
 
-  bla::Vector<double> w({1, 2, 3, 4, 5});
-  std::cout << "w = " << w << std::endl;
+  bla::Vector<double> w({1, 2, 3, 4, 5})
+  std::cout << "x = " << x << std::endl;
 
 }
 
