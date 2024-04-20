@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <initializer_list>
 #include "expression.h"
 
 
@@ -53,6 +54,14 @@ namespace ASC_bla {
         VectorView &operator=(const VecExpr<TB> &v2) {
             for (size_t i = 0; i < size_; i++)
                 data_[dist_ * i] = v2(i);
+            return *this;
+        }
+
+        template <typename TB>
+        VectorView & operator= (std::initializer_list<TB> list)
+        {
+            for (size_t i = 0; i < size_; i++)
+                data_[dist_*i] = list.begin()[i];
             return *this;
         }
 
@@ -132,6 +141,15 @@ namespace ASC_bla {
         Vector(const VecExpr<TB> &v)
                 : Vector(v.Size()) {
             *this = v;
+        }
+
+        // initializer list constructor
+        Vector (std::initializer_list<T> list)
+                : VectorView<T> (list.size(), new T[list.size()]) {
+            // copy list
+            for (size_t i = 0; i < list.size(); i++){
+                data_[i] = list.begin()[i];
+            }
         }
 
         Vector & operator= (T scal)

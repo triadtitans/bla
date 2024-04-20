@@ -9,7 +9,9 @@ int main()
 {
   size_t n = 10;
   bla::Matrix<double> m(30,30);
-  bla::Matrix<double> q(3,3);
+  bla::Matrix<double> q(3, 3, {0, 0.01, 0.05,
+                               7,    0,    0,
+                               0,   10, 0.01});
   srand(7893);
 
   for (int i = 0; i < 30; i++) {
@@ -18,11 +20,11 @@ int main()
       //q(i,j) = (int)(10*(rand()/(double)RAND_MAX));
     }
   }
-  q(1,0) = 7;
+  /* q(1,0) = 7;
   q(0,2) = 0.05;
   q(0,1) = 0.01;
   q(2,1) = 10;
-  q(2, 2)= 0.01;
+  q(2, 2)= 0.01; */
 
 
   std::cout << m << std::endl << std::endl;
@@ -42,6 +44,17 @@ int main()
   std::cout << q;
   std::cout << bla::inverse(q);
   std::cout << q*bla::inverse(q);
+
+  q.Rows(1, 2) = {1, 0, 0,
+                  0, 1, 0};
+
+  std::cout << std::endl << q << std::endl;
+
+  q = {1, 0, 0,
+       0, 1, 0,
+       0, 0, 1};
+
+  std::cout << std::endl << q << std::endl;
 
   /* std::cout << std::endl << std::endl;
   std::cout << "fastMul" << std::endl;

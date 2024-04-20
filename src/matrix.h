@@ -5,6 +5,7 @@
 #include <vector>
 #include <exception>
 #include <utility>
+#include <initializer_list>
 
 #include "expression.h"
 #include "vector.h"
@@ -79,6 +80,26 @@ public:
         }
         return *this;
     }
+
+    MatrixView & operator= (std::initializer_list<T> list) {
+        if (list.size() != _width*_height){
+            throw std::invalid_argument("initializer list does not have right length for matrix shape");
+            return *this;
+        }
+        else{
+        for (size_t i = 0; i < _height; i++) {
+            for (size_t j = 0; j < _width; j++) {
+            if constexpr (ORD == Ordering::RowMajor) {
+                _data[_dist * i + j] = list.begin()[_width*i + j];
+            } else {
+                _data[_dist * j + i] = list.begin()[_height*j + i];
+            }
+            }
+        }
+        }
+        return *this;
+    }
+
     template<typename TB>
     MatrixView &operator+=(const MatrixExpr<TB> &m2) {
         if(_width != m2.Width() || _height != m2.Height()){
@@ -242,6 +263,21 @@ public:
         *this = m;
     }
 
+    // initializer list constructor
+    Matrix (size_t height, size_t width, std::initializer_list<T> list)
+        : MatrixView<T, ORD> (height, width, new T[list.size()]) {
+        // check if list has the right size
+        if (list.size() != _height*_width){
+            throw std::invalid_argument("initializer list does not have right length for matrix shape");
+            return;
+        }else{
+            // copy list
+            for (size_t i = 0; i < list.size(); i++){
+                _data[i] = list.begin()[i];
+            }
+        }
+    }
+
     template<typename TB>
     Matrix &operator=(const MatrixExpr<TB> &m2) {
         if(_width != m2.Width() && _height != m2.Height()){
@@ -291,6 +327,25 @@ public:
     //     std::swap(_dist, m._dist);
     //     return *this;
     // }
+
+    Matrix & operator= (std::initializer_list<T> list) {
+        if (list.size() != _width*_height){
+            throw std::invalid_argument("initializer list does not have right length for matrix shape");
+            return *this;
+        }
+        else{
+        for (size_t i = 0; i < _height; i++) {
+            for (size_t j = 0; j < _width; j++) {
+            if constexpr (ORD == Ordering::RowMajor) {
+                _data[_dist * i + j] = list.begin()[_width*i + j];
+            } else {
+                _data[_dist * j + i] = list.begin()[_height*j + i];
+            }
+            }
+        }
+        }
+        return *this;
+    }
 };
 
 template<typename T, Ordering ORD>

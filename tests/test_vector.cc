@@ -68,7 +68,13 @@ int main()
   x.Range(2,9) = 3;
   std::cout <<x<<"\n";
   x.Slice(1,5) = 10;
-  std::cout << "x = " << x << std::endl;  
+  std::cout << "x = " << x << std::endl;
+  x.Range(1,5) = {11, 12, 13, 14};
+  std::cout << "x = " << x << std::endl;
+
+  bla::Vector<double> w({1, 2, 3, 4, 5});
+  std::cout << "w = " << w << std::endl;
+
 }
 
 
