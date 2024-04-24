@@ -6,6 +6,7 @@
 #include <exception>
 #include <utility>
 #include <initializer_list>
+#include <array>
 
 #include "expression.h"
 #include "vector.h"
@@ -23,6 +24,9 @@ class MatrixView;
 
 template<typename T=double, Ordering ORD=Ordering::RowMajor>
 class Matrix;
+
+template<size_t HEIGHT, size_t WIDTH, typename T=double, Ordering ORD=Ordering::RowMajor>
+class Mat;
 
 template <typename T, Ordering ORD>
 class MatrixView : public MatrixExpr<MatrixView<T,ORD>>{
@@ -313,6 +317,8 @@ public:
     Matrix &operator=(const Matrix &m2) {
         _width = m2._width;
         _height = m2._height;
+        delete _data;
+        _data = new T[_height*_width]();
         _dist = m2._dist;
         for (size_t i = 0; i < _width*_height; i++){
             _data[i]=m2._data[i];
@@ -329,6 +335,96 @@ public:
     // }
 
     Matrix & operator= (std::initializer_list<T> list) {
+        if (list.size() != _width*_height){
+            throw std::invalid_argument("initializer list does not have right length for matrix shape");
+            return *this;
+        }
+        else{
+        for (size_t i = 0; i < _height; i++) {
+            for (size_t j = 0; j < _width; j++) {
+            if constexpr (ORD == Ordering::RowMajor) {
+                _data[_dist * i + j] = list.begin()[_width*i + j];
+            } else {
+                _data[_dist * j + i] = list.begin()[_height*j + i];
+            }
+            }
+        }
+        }
+        return *this;
+    }
+};
+
+template<size_t HEIGHT, size_t WIDTH,typename T, Ordering ORD>
+class Mat : public MatrixView<T,ORD> {
+    typedef MatrixView<T, ORD> BASE;
+    using BASE::_width;
+    using BASE::_height;
+    using BASE::_data;
+    using BASE::_dist;
+    std::array<T, WIDTH*HEIGHT> _local_data;
+
+public:
+    Mat()
+            : MatrixView<T,ORD>(HEIGHT, WIDTH, _local_data.data(), ORD == Ordering::RowMajor ? WIDTH : HEIGHT ) {
+                _local_data.fill(0);
+            }
+
+    Mat(const Mat &m)
+            : Mat() {
+        *this = m;
+    }
+
+    // initializer list constructor
+    Mat (std::initializer_list<T> list)
+        : Mat() {
+        // check if list has the right size
+        if (list.size() != _height*_width){
+            throw std::invalid_argument("initializer list does not have right length for matrix shape");
+            return;
+        }else{
+            // copy list
+            for (size_t i = 0; i < list.size(); i++){
+                _local_data[i] = list.begin()[i];
+            }
+        }
+    }
+
+    template<typename TB>
+    Mat &operator=(const MatrixExpr<TB> &m2) {
+        if(_width != m2.Width() && _height != m2.Height()){
+            throw std::invalid_argument("Matrix dimension must match for copy");
+        }
+        for (size_t col = 0; col < _width; col++){
+            for(size_t row=0; row < _height; row++){
+                (*this)(row, col)= m2(row, col);
+            }
+        }
+        return *this;
+    }
+
+    template<typename TA>
+    Mat(const MatrixExpr<TA> &m)
+            : Mat() {
+        *this = m;
+    }
+
+
+    Mat &operator=(const Mat &m2) {
+        for (size_t i = 0; i < _width*_height; i++){
+            _data[i]=m2._data[i];
+        }
+        return *this;
+    }
+
+    // Matrix &operator=(Matrix &&m) {
+    //     std::swap(_height, m._height);
+    //     std::swap(_width, m._width);
+    //     std::swap(_data, m._data);
+    //     std::swap(_dist, m._dist);
+    //     return *this;
+    // }
+
+    Mat & operator= (std::initializer_list<T> list) {
         if (list.size() != _width*_height){
             throw std::invalid_argument("initializer list does not have right length for matrix shape");
             return *this;

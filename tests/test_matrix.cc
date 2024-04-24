@@ -8,8 +8,9 @@ namespace bla = ASC_bla;
 int main()
 {
   size_t n = 10;
+  bla::Mat<3,3> mat;
   bla::Matrix<double> m(30,30);
-  bla::Matrix<double> q(3, 3, {0, 0.01, 0.05,
+  bla::Matrix<double> q(3,3,{0, 0.01, 0.05,
                                7,    0,    0,
                                0,   10, 0.01});
   srand(7893);
@@ -39,6 +40,7 @@ int main()
 
 
   bla::Matrix<double> q_inv = bla::inverse(q);
+
   std::cout << "Inverse\n";
   std::cout << q;
   std::cout << q;
