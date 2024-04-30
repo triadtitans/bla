@@ -192,18 +192,18 @@ public:
 
     VectorView<T, size_t> Row(size_t i) {
         if(ORD == Ordering::RowMajor) {
-            return VectorView<T, size_t>(_width, 1, _data+i*_width);
+            return VectorView<T, size_t>(_width, 1, _data+i*_dist);
         }
 
-        return VectorView<T, size_t>(_width, _height, _data+i);
+        return VectorView<T, size_t>(_width, _dist, _data+i);
     }
 
     VectorView<T, size_t> Col(size_t j) {
         if(ORD == Ordering::ColMajor) {
-            return VectorView<T, size_t>(_height, 1, _data+j*_width);
+            return VectorView<T, size_t>(_height, 1, _data+j*_dist);
         }
 
-        return VectorView<T, size_t>(_height, _width, _data+j);
+        return VectorView<T, size_t>(_height, _dist, _data+j);
     }
 
     MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose() {
@@ -234,6 +234,7 @@ public:
         }
         RowSwap(column, pivot_i);
     }
+
 
     T& operator()(size_t row, size_t column) {
         return const_cast<T&>(std::as_const(*this)(row,column));
