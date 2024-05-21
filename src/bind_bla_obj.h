@@ -2,7 +2,7 @@
 
 m.doc() = "Basic linear algebra module"; // optional module docstring
 
-py::class_<Vector<double>> (m, "Vector")
+py::class_<Vector<double>> (m, "Vector", py::module_local())
     .def(py::init<size_t>(),
         py::arg("size"), "create vector of given size")
     .def("__len__", &Vector<double>::Size,
@@ -53,7 +53,7 @@ py::class_<Vector<double>> (m, "Vector")
     }))
 ;
 
-py::class_<Vec<3>> (m, "Vec3")
+py::class_<Vec<3>> (m, "Vec3", py::module_local())
     .def(py::init<>(), "create vector of fixed size 3")
     .def("__len__", &Vec<3>::Size,
         "return size of vector")
@@ -78,7 +78,7 @@ py::class_<Vec<3>> (m, "Vec3")
     })
 ;
 
-py::class_<Matrix<double,Ordering::RowMajor>> (m, "Matrix", py::buffer_protocol())
+py::class_<Matrix<double,Ordering::RowMajor>> (m, "Matrix", py::buffer_protocol(), py::module_local())
     .def(py::init<size_t,size_t>(),
         py::arg("height"), py::arg("width"), "create matrix of given size")
     .def("__setitem__", [](Matrix<double,Ordering::RowMajor> & self, std::tuple<int, int> shape, double v) {
