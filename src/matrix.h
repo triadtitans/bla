@@ -216,7 +216,7 @@ public:
 
     void ColSwap(size_t col, size_t dest) {
         for(size_t i=0; i<Height(); i++) {
-            std::swap((*this)(dest, i), (*this)(col, i));
+            std::swap((*this)(i, dest), (*this)(i, col));
         }
     }
     void EnsureNonzero(size_t row, size_t column){
@@ -635,6 +635,31 @@ Matrix<T> Diagonal(size_t height, T el) {
     eye.Diag() = el;
 
     return eye;
+}
+
+template<typename T>
+T degToRad(T deg){
+  return M_PI/180. * deg;
+}
+
+// returns rotation matrix for deg degrees around axis: x: 0 y: 1 z: 2
+template<typename T>
+Matrix<T> makeRotationMatrix3(int axis, T deg){
+    if (axis < 0 || axis > 2) throw std::invalid_argument("axis index out of range");
+
+    // convert degree input to radians
+    double rad = degToRad<T>(deg);
+
+    // create rotation matrix around x axis
+    Matrix<double> R (3, 3, {1, 0,        0,
+                                0, cos(rad), -sin(rad),
+                                0, sin(rad), cos(rad)});
+
+    // correct the rotation axis
+    R.ColSwap(0, axis);
+    R.RowSwap(0, axis);
+
+    return R;
 }
 
 }
