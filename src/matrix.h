@@ -318,7 +318,7 @@ public:
     Matrix &operator=(const Matrix &m2) {
         _width = m2._width;
         _height = m2._height;
-        delete _data;
+        delete[] _data;
         _data = new T[_height*_width]();
         _dist = m2._dist;
         for (size_t i = 0; i < _width*_height; i++){
