@@ -118,7 +118,7 @@ namespace ASC_bla
     
       // int dgetrf_(integer *m, integer *n, doublereal *a, 
       //             integer * lda, integer *ipiv, integer *info);
-std::cout << a;
+      // std::cout << a;
       dgetrf_(&n, &m, a.Data(), &lda, ipiv.data(), &info);
     }
     
@@ -138,7 +138,7 @@ std::cout << a;
       dgetrs_(&transa, &n, &nrhs, a.Data(), &lda, (integer*)ipiv.data(), b.Data(), &ldb, &info);
     }
   
-    Matrix<double,ORD> Inverse() && {
+    Matrix<double,ORD> Inverse() { // rvalue reference return removed
       double hwork;
       integer lwork = -1;
       integer n = a.Height();      
