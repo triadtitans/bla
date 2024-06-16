@@ -642,6 +642,11 @@ T degToRad(T deg){
   return M_PI/180. * deg;
 }
 
+template<typename T>
+T radToDeg(T deg){
+  return 180./M_PI * deg;
+}
+
 // returns rotation matrix for deg degrees around axis: x: 0 y: 1 z: 2
 template<typename T>
 Matrix<T> makeRotationMatrix3(int axis, T deg){
