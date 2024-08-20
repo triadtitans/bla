@@ -596,6 +596,12 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
 }
 
 template <typename T>
+Vector<T> AsVector (MatrixView<T> mat)  {
+    VectorView<T> res(mat.Height()*mat.Width(), mat.Data());
+    return res;
+}
+
+template <typename T>
 auto AsMatrix (VectorView<T> vec, size_t h, size_t w) {
     return MatrixView<T> (h,w,vec.Data());
 }
