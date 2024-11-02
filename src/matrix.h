@@ -2,6 +2,7 @@
 #define FILE_MATRIX_H
 
 #include <iostream>
+#include <stdexcept>
 #include <vector>
 #include <exception>
 #include <utility>
@@ -116,7 +117,7 @@ public:
         }
         return *this;
     }
-    
+
     template<typename TB>
     MatrixView &operator*=(const MatrixExpr<TB> &m2) {
         if(m2.Height() == Height() || m2.Width() == Width()) {
@@ -125,16 +126,16 @@ public:
         Matrix<TB> res (Height(), Width());
         res = m2 * *this;
 
-        return (*this)=res; 
+        return (*this)=res;
     }
     MatrixView &operator*=(T s) {
         Matrix<T> res{Height(), Width()};
         res =  s*(*this) ;
 
-        return (*this)=res; 
+        return (*this)=res;
     }
     MatrixView &operator/=(T s) {
-        return ((*this)*=(1./s)); 
+        return ((*this)*=(1./s));
     }
 
     template<typename TB>
@@ -241,6 +242,12 @@ public:
     }
 
     const T& operator()(size_t row, size_t column) const {
+        if ((row < 0) || (row >= Height())){
+            throw std::invalid_argument(std::string("invalid Matrixview row index ") + std::to_string(row) + " (height: " + std::to_string(Height()) + ")");
+        }
+        if ((column < 0) || (column >= Width())){
+          throw std::invalid_argument(std::string("invalid Matrixview column index ") + std::to_string(column) + " (width: " + std::to_string(Width()) + ")");
+        }
         if constexpr (ORD == Ordering::RowMajor) {
             return _data[row * _dist + column];
         } else {
@@ -295,7 +302,7 @@ public:
         }
         return *this;
     }
-    
+
     Matrix(Matrix &&m)
             : MatrixView<T,ORD>{0,0, nullptr,0} {
         std::swap(_width, m._width);
@@ -504,8 +511,8 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
             auto ptr = b.Data() + spaltenindex;
 
             auto [sum0, sum1, sum2, sum3] = InnerProduct4<12>(
-                n, 
-                zeilenstart, 
+                n,
+                zeilenstart,
                 zeilenstart + zeilendist,
                 zeilenstart + 2 * zeilendist,
                 zeilenstart + 3 * zeilendist,
@@ -519,7 +526,7 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
             sum3.Store(res.Data() + (i*4+3)*res.Dist() + spaltenindex);
         }
         size_t lastindex = (l/12)*12;
-        
+
         for (size_t j = lastindex; j < lastindex + spaltenrest; j++) {
             // rest spalten mit kleinem simd
             auto [sum0, sum1, sum2, sum3] = InnerProduct4<1>(
@@ -551,7 +558,7 @@ Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<dou
             auto ptr = b.Data() + spaltenindex;
 
             auto sum = InnerProduct<12>(
-                n, 
+                n,
                 zeilenstart,
                 ptr,
                 b.Dist()
