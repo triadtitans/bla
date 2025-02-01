@@ -8,12 +8,14 @@
 #include <utility>
 #include <initializer_list>
 #include <array>
+#include <math.h>
 
 #include "expression.h"
 #include "vector.h"
 #include "simd.h"
 
 using namespace ASC_HPC;
+using namespace std;
 
 namespace ASC_bla {
     enum class Ordering {
@@ -191,12 +193,30 @@ public:
         );
     }
 
+    MatrixView Block(size_t first_row, size_t first_col, size_t num_rows, size_t num_cols) {
+        return MatrixView(num_rows, num_cols, &(*this)(first_row, first_col), this->_dist);
+    }
+
     VectorView<T, size_t> Row(size_t i) {
         if(ORD == Ordering::RowMajor) {
             return VectorView<T, size_t>(_width, 1, _data+i*_dist);
         }
 
         return VectorView<T, size_t>(_width, _dist, _data+i);
+    }
+
+    void setConstant(T scal) {
+        for(size_t i=0; i<Height(); i++) {
+            for(size_t j=0; j < Width(); j ++) {
+                (*this)(i, j) = scal;
+            }
+        }
+    }
+
+    void diagonal(T scal) {
+        for(size_t i = 0; i <Height(); i++) {
+            (*this)(i, i) = scal;
+        }
     }
 
     VectorView<T, size_t> Col(size_t j) {
@@ -207,7 +227,7 @@ public:
         return VectorView<T, size_t>(_height, _dist, _data+j);
     }
 
-    MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose() {
+    MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> transpose() {
         return MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>(_height, _width, _data, ORD == Ordering::RowMajor ? _width : _height);
     };
     void RowSwap(size_t row,size_t dest){
@@ -453,8 +473,8 @@ public:
 };
 
 template<typename T, Ordering ORD>
-MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> Transpose(MatrixView<T, ORD> &m) {
-    return m.Transpose();
+MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> transpose(MatrixView<T, ORD> &m) {
+    return m.transpose();
 }
 
 template <size_t SW>
@@ -489,7 +509,7 @@ auto InnerProduct (size_t n, double * px, double * py, size_t dy)
 }
 
 
-Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, Ordering::RowMajor> b) {
+inline Matrix<double> fastMul (MatrixView<double, Ordering::RowMajor> a, MatrixView<double, Ordering::RowMajor> b) {
     if(b.Height()!=a.Width())
         throw std::invalid_argument("Matrix dimension must match for multiplication");
 
@@ -670,8 +690,8 @@ Matrix<T> makeRotationMatrix3(int axis, T deg){
 
     // create rotation matrix around x axis
     Matrix<double> R (3, 3, {1, 0,        0,
-                                0, cos(rad), -sin(rad),
-                                0, sin(rad), cos(rad)});
+                                0, std::cos(rad), -std::sin(rad),
+                                0, std::sin(rad), std::cos(rad)});
 
     // correct the rotation axis
     R.ColSwap(0, axis);

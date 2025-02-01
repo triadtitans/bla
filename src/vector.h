@@ -92,6 +92,16 @@ namespace ASC_bla {
             data_[dist_*i] = scal;
           return *this;
         }
+        
+        template<size_t D>
+        VectorView & operator= (AutoDiff<D, double> v_diff)
+        {
+          for (size_t i = 0; i < size_; i++)
+            data_[dist_*i] = v_diff.DValue(i);
+          return *this;
+        }
+
+
         T* Data(){return data_;}
         auto View() const { return VectorView(size_, dist_, data_); }
         size_t Size() const { return size_; }
@@ -101,6 +111,32 @@ namespace ASC_bla {
         
         auto Range(size_t first, size_t next) const {
           return VectorView(next-first, dist_, data_+first*dist_);
+        }
+
+        VectorView<T, TDIST> segment(size_t first, size_t leng) const {
+            return VectorView(leng, dist_, data_+first*dist_);
+        }
+
+        void setConstant(T scal) {
+            for(size_t i=0; i<Size(); i++) {
+                (*this)(i) = scal;
+            }
+        }
+
+        T norm() {
+            T res = 0;
+            for(size_t i=0; i<Size(); i++) {
+                res += (*this)(i)*(*this)(i);
+            }
+            return sqrt(res);
+        }
+
+        T squaredNorm() {
+            T res = 0;
+            for(size_t i=0; i<Size(); i++) {
+                res += (*this)(i)*(*this)(i);
+            }
+            return res;
         }
 
         auto Slice(size_t first, size_t slice) const {

@@ -3,6 +3,7 @@
 #include <exception>
 #include <iostream>
 #include <utility>
+#include <autodiff.h>
 
 namespace ASC_bla {
 
@@ -197,11 +198,24 @@ namespace ASC_bla {
     auto operator-(const VecExpr<TA> &a, const VecExpr<TB> &b) {
         return SumVecExpr(a.Upcast(), ScaleVecExpr<double, TB>(-1, b.Upcast()));
     }
-
-
-
+    
     template<typename T>
     auto operator*(double scal, const VecExpr<T> &v) {
+        return ScaleVecExpr(scal, v.Upcast());
+    }
+
+    template<typename T>
+    auto operator*(const VecExpr<T> &v, double scal) {
+        return ScaleVecExpr(scal, v.Upcast());
+    }
+
+    template<size_t D, typename T>
+    auto operator*(AutoDiff<D, double> scal, const VecExpr<T> &v) {
+        return ScaleVecExpr(scal, v.Upcast());
+    }
+    
+    template<size_t D, typename T>
+    auto operator*(const VecExpr<T> &v, AutoDiff<D, double> scal) {
         return ScaleVecExpr(scal, v.Upcast());
     }
 
