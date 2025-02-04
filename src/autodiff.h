@@ -547,8 +547,8 @@ namespace ASC_bla
     inline AutoDiff<D, SCAL> sin (AutoDiff<D, SCAL> x)
     {
         AutoDiff<D, SCAL> res;
-        SCAL s = sin(x.Value());
-        SCAL c = cos(x.Value());
+        SCAL s = std::sin(x.Value());
+        SCAL c = std::cos(x.Value());
         
         res.Value() = s;
         for (size_t k = 0; k < D; k++) {
@@ -567,8 +567,8 @@ namespace ASC_bla
     inline AutoDiff<D, SCAL> cos (AutoDiff<D, SCAL> x)
     {
         AutoDiff<D, SCAL> res;
-        SCAL s = sin(x.Value());
-        SCAL c = cos(x.Value());
+        SCAL s = std::sin(x.Value());
+        SCAL c = std::cos(x.Value());
         
         res.Value() = c;
         for (size_t k = 0; k < D; k++) {
