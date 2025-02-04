@@ -263,14 +263,14 @@ namespace ASC_bla
         }
     };
 
-    //template<size_t D, typename SCAL>
-    //inline ostream & operator<< (ostream & ost, const AutoDiff<D,SCAL> & x)
-    //{
-    //    ost << x.Value() << ", D = ";
-    //    for (int i = 0; i < D; i++)
-    //        ost << x.DValue(i) << " ";
-    //    return ost;
-    //}
+    template<size_t D, typename SCAL>
+    inline ostream & operator<< (ostream & ost, const AutoDiff<D,SCAL> & x)
+    {
+        ost << x.Value() << ", D = ";
+        for (int i = 0; i < D; i++)
+            ost << x.DValue(i) << " ";
+        return ost;
+    }
 
     template<size_t D, typename SCAL, typename SCAL2, typename std::enable_if<std::is_convertible<SCAL2,SCAL>::value, int>::type = 0>
     inline AutoDiff<D, SCAL> operator+ (SCAL2 x, const AutoDiff<D, SCAL> & y) throw()

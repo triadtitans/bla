@@ -91,6 +91,17 @@ namespace ASC_bla {
         return ScaleMatrixExpr(m.Upcast(),scal);
     }
 
+
+    template<size_t D, typename T>
+    auto operator*(AutoDiff<D, double> scal, const MatrixExpr<T> &m) {
+        return ScaleMatrixExpr(m.Upcast(),scal);
+    }
+
+    template<size_t D, typename T>
+    auto operator*(const MatrixExpr<T> &m, AutoDiff<D, double> scal) {
+        return ScaleMatrixExpr(m.Upcast(),scal);
+    }
+
     template<typename TA, typename TB>
     auto operator+(const MatrixExpr<TA> &m, const MatrixExpr<TB> &n) {
         return SumMatrixExpr(n.Upcast(), m.Upcast());
