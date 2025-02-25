@@ -228,7 +228,7 @@ public:
     }
 
     MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor> transpose() {
-        return MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>(_height, _width, _data, ORD == Ordering::RowMajor ? _width : _height);
+               return MatrixView<T, ORD==Ordering::RowMajor ? Ordering::ColMajor : Ordering::RowMajor>(_height, _width, _data, ORD == Ordering::RowMajor ? _width : _height);
     };
     void RowSwap(size_t row,size_t dest){
         for(size_t i=0; i<Width();i++)
